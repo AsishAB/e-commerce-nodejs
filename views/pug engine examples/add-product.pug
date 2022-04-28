@@ -1,0 +1,27 @@
+doctype html
+html(lang='en')
+  head
+    meta(charset='UTF-8')
+    meta(name='viewport' content='width=device-width, initial-scale=1.0')
+    meta(http-equiv='X-UA-Compatible' content='ie=edge')
+    title Add Product
+    script(type='text/javascript' src='https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=1EOohlEG_K4FJLdx6azMk4YL9ZjuqDMllohgKaiJyWoyqX6Qm2cMCqwEgzTcaseCiHWjfe9PdEibGXkv5NuZRLV14TSfflX6GbLOr_TLQYlbG5NcuDxIY3G_ole8hfgg2cEFVKqTrEYJWNM0URCWOufaYJTOCXAEhpmdwiG3nTSpDnXrqVtwtobGNW9BW9q8ec5sDVh17m5jBdooL209Qjw1DzAkwdfTboAfLQ4Dk7YtYxVBSicJH6An1aC1jOjGiEmcvOYKJtrRbho-ea6PGVoOYgXY5Dtth7Q4uDvx23bYp4QSs7xCOB3B4u302eJfXjC43gs--_Z-n-1IFGFrz_H-lb4m5Mq7eSOiQQcfPP5MZvheUTdrhlextilI9yS9iUwdIB4O6ifrWPDD9qUAodG9gZW8N6SMLE4pskoN7y7xfzn5FqJGQefqu5NtXiqlZ-9RySaE3slvLIdnCpCiD9Fn45I7rDgnycdqPhalfAkXEz-MIG4_LrJTQ7DFBp9TIegF1p4i9abbDZAAoQS_3EH0ryOuFKtLD0KDTeUHjCRroxwJlPuUDMLzAiMNtZ6PVwI8StADfmU3NqcxS9wmKVSIM69PZOrER3iXCWOoXpJsCj6LcQfcTOiQG2uB4qk3UUf_G5mfhoyVmblJsfnvpGMtxz6B8wyX6fX27TmRjmqwwDVrP6IHnk9fKWV-IznE4zhLQxneWkpPaJoSXmghrAVoyHAtbSJ_5kyn38GscQ7RfFUdJ6PSh5n3fAvTYEoSAiZa-XN6JPFpaD0Uu9aE5Q' charset='UTF-8')
+    link(rel='stylesheet' href='/css/bootstrap.min.css')
+  body
+    header
+      nav.navbar.navbar-expand-lg.navbar-light.bg-light
+        .container-fluid
+          a.navbar-brand(href='/') E-Commerce
+          button.navbar-toggler(type='button' data-bs-toggle='collapse' data-bs-target='#navbarSupportedContent' aria-controls='navbarSupportedContent' aria-expanded='false' aria-label='Toggle navigation')
+            span.navbar-toggler-icon
+          #navbarSupportedContent.collapse.navbar-collapse
+            ul.navbar-nav.me-auto.mb-2.mb-lg-0
+              li.nav-item
+                a.nav-link(href='/admin/add-product') Shop
+              li.nav-item
+                a.nav-link(href='/admin/add-product') Add Product
+    main
+      form(action='/admin/add-product' method='POST')
+        input(type='text' name='title')
+        button(type='submit') Add Product
+    script(src='/js/bootstrap.min.js')

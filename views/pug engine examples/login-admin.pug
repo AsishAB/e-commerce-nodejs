@@ -1,0 +1,64 @@
+doctype html
+html(lang='en')
+  head
+    title Admin login
+    meta(charset='utf-8')
+    meta(name='viewport' content='width=device-width, initial-scale=1, shrink-to-fit=no')
+    link(href='https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap' rel='stylesheet')
+    link(rel='stylesheet' href='https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css')
+    link(rel='stylesheet' href='/css/admin-style.css')
+  body
+    header
+      nav.navbar.navbar-expand-lg.navbar-light.bg-light
+        .container-fluid
+          a.navbar-brand(href='/') E-Commerce
+          button.navbar-toggler(type='button' data-bs-toggle='collapse' data-bs-target='#navbarSupportedContent' aria-controls='navbarSupportedContent' aria-expanded='false' aria-label='Toggle navigation')
+            span.navbar-toggler-icon
+          #navbarSupportedContent.collapse.navbar-collapse
+            ul.navbar-nav.me-auto.mb-2.mb-lg-0
+              li.nav-item
+                a.nav-link(href='#') Shop
+              li.nav-item
+                a.nav-link(href='/admin/add-product') Add Product
+    section.ftco-section
+      .container
+        .row.justify-content-center
+          .col-md-6.text-center.mb-5
+            h2.heading-section Admin Login
+        .row.justify-content-center
+          .col-md-7.col-lg-5
+            .wrap
+              .img(style='background-image: url(/assets/admin/images/bg-1.jpg);')
+              // <img class="img" src="/assets/admin/images/bg-1.jpg>
+              .login-wrap.p-4.p-md-5
+                .d-flex
+                  .w-100
+                    h3.mb-4 Sign In
+                  .w-100
+                    p.social-media.d-flex.justify-content-end
+                      a.social-icon.d-flex.align-items-center.justify-content-center(href='#')
+                        span.fa.fa-facebook
+                      a.social-icon.d-flex.align-items-center.justify-content-center(href='#')
+                        span.fa.fa-twitter
+                form.signin-form(action='/admin/add-product' method='POST')
+                  .form-group.mt-3
+                    input.form-control(type='text')
+                    label.form-control-placeholder(for='username') Username
+                  .form-group
+                    input#password-field.form-control(type='password')
+                    label.form-control-placeholder(for='password') Password
+                    span.fa.fa-fw.fa-eye.field-icon.toggle-password(toggle='#password-field')
+                  .form-group
+                    button.form-control.btn.btn-primary.rounded.submit.px-3(type='submit') Sign In
+                  .form-group.d-md-flex
+                    .w-50.text-left
+                      label.checkbox-wrap.checkbox-primary.mb-0
+                        | Remember Me
+                        input(type='checkbox' checked='')
+                        span.checkmark
+                    .w-50.text-md-right
+                      a(href='#') Forgot Password
+                p.text-center
+                  | Not a member? 
+                  a(data-toggle='tab' href='#signup') Sign Up
+    script(src='/js/bootstrap.min.js')
