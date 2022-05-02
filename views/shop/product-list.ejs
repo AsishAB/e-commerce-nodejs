@@ -5,7 +5,7 @@
         <% if( pdts.length > 0 ) { %>
           <% for(let i = 0; i < pdts.length; i++) { %>
         <div class="accordion" id="accordionExample">
-          <div class="accordion-item">
+          <div class="accordion-item mt-3">
             <h2 class="accordion-header" id="headingOne">
               <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_<%= i %>" aria-expanded="true" aria-controls="collapseOne">
                 <%= pdts[i].title %>
@@ -13,7 +13,7 @@
             </h2>
             <div id="collapse_<%= i %>" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
               <div class="accordion-body">
-                  <%= pdts[i].desc %>
+                  <%= pdts[i].description %>
               </div>
             </div>
           </div>
@@ -21,7 +21,7 @@
           <% } %>
         <% } else { %>
 
-          <h1>No Products Found</h1>
+          <h6>No Products Found</h6>
 
         <% } %>
 

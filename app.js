@@ -22,7 +22,9 @@ app.set('views engine', 'ejs');
 app.set('views', [
     path.join(rootDir, 'views'),
     path.join(rootDir, 'views/admin'),
-    path.join(rootDir, 'views/htmlerrors')
+    path.join(rootDir, 'views/htmlerrors'),
+    path.join(rootDir, 'views/shop')
+
 
 
 ]);
@@ -40,5 +42,5 @@ app.use(htmlError.get404Page); //To display 404 page
 const port = process.env.PORT || 3000;
 
 app.listen(port, () => {
-    console.log(`Example app listening on port ${port} - http://localhost:${port}`)
+    console.log(`E-Commerce app listening on port ${port} - http://localhost:${port}`)
 });
