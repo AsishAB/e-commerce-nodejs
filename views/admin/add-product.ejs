@@ -1,23 +1,32 @@
 <%- include('../layouts/main-layout.ejs') %>
     <main>
-      <form action="/admin/add-product" method="POST">
+    <div class="container">
       <div class="row">
-        <div class="col-md-12">
-          
-            <input type="text" placeholder="Title" name="title">
-           
-        </div>
-        <div class="col-md-12 pt-5">
-          <textarea placeholder="Description" name="description"></textarea>
-        </div>
-        <div class="col-md-6 pt-5">
-          
-          <button type="submit" class="btn btn-success">Add Product</button>
-        
-        </div>
+        <form action="/admin/add-product" method="POST">
+          <div class="mb-3">
+            <label for="title" class="form-label">Title</label>
+            <input type="text" class="form-control" id="title" name="title">
+            
+          </div>
+          <div class="mb-3">
+            <label for="desc" class="form-label">Description</label>
+            <textarea class="form-control" id="desc" name="title"></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="img_url" class="form-label">Image URL</label>
+            <input type="file" class="form-control" id="img_url" name="img_url">
+          </div>
+          <div class="mb-3">
+            <label for="price" class="form-label">Price</label>
+            <input type="text" class="form-control" id="price" name="price">
+          </div>
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
 
       </div>
-    </form> 
-    </main>
+    </div>
+    
+
+  </main>
 
 <%- include('../layouts/footer.ejs') %>

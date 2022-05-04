@@ -3,10 +3,13 @@ const path = require("path");
 const rootDir = require('../helpers/user-defined-path');
 const fs = require('fs');
 const p = path.join(rootDir, 'data', 'products.json');
+
 module.exports = class Product {
-    constructor(tlt, desc='') {
+    constructor(tlt, desc='', imgURL, price) {
         this.title = tlt;
         this.description = desc;
+        this.imageURL = (imgURL != '') ? imgURL : "https://live.staticflickr.com/5217/5471047557_4dc13f5376_n.jpg";
+        this.price = price;
     }
 
 
