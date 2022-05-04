@@ -10,6 +10,7 @@ const shopController = require('../controllers/ShopController');
 const productController = require('../controllers/ProductController');
 const cartController = require('../controllers/CartController');
 const checkoutController = require('../controllers/CheckoutController');
+const orderController = require('../controllers/OrderController');
 
 router.get('/', shopController.getShopIndexPage);
 
@@ -20,6 +21,8 @@ router.get('/products/:id', shopController.getProductDetail);
 router.get('/cart', cartController.getCart);
 
 router.get('/checkout', checkoutController.getCheckout);
+
+router.get('/orders', orderController.getOrders);
 
 
 module.exports = router;

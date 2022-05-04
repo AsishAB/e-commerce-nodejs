@@ -6,6 +6,7 @@ const p = path.join(rootDir, 'data', 'products.json');
 
 module.exports = class Product {
     constructor(tlt, desc='', imgURL, price) {
+        this.productId = 2;
         this.title = tlt;
         this.description = desc;
         this.imageURL = (imgURL != '') ? imgURL : "https://live.staticflickr.com/5217/5471047557_4dc13f5376_n.jpg";

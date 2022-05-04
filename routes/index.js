@@ -3,12 +3,9 @@ const path = require("path");
 
 const router = express.Router();
 
-const rootDir = require('../helpers/user-defined-path');
+const indexController = require('../controllers/IndexController');
 
-router.get('/', (req, res, next) => {
-    //res.sendFile(path.join(rootDir, 'views', 'index.pug'));
-    res.render('index.ejs');
-});
+router.get('/', indexController.getIndex);
 
 module.exports = router;
 

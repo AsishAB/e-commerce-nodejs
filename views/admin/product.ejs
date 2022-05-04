@@ -1,0 +1,41 @@
+<%- include('../layouts/main-layout.ejs')  %>
+
+    <main>
+      <div class="container">
+      <% if( pdts.length > 0 ) { %>
+        
+          <div class="row">
+            
+              <% for(let i = 0; i < pdts.length; i++) { %>
+                
+                <div class="col-md-6 mt-3">
+                  <div class="card" style="width: 18rem;">
+                    <img src="<%= pdts[i].imageURL %>" alt="<%= pdts[i].title %>" class="card-img-top" height="150px" width="50px">
+                    <div class="card-body">
+                      <h5 class="card-title"><%= pdts[i].title %></h5>
+                      <p class="card-text"><%= pdts[i].description %></p>
+                      <p class="card-text"><%= pdts[i].price %></p>
+                      <a href="/admin/edit-product-admin/<%= pdts[i].productId %>" class="btn border border-primary text-primary">Edit</a> &nbsp;
+                      <a href="#" class="btn border border-danger text-danger">Delete</a>
+                    </div>
+                  </div>
+              </div>
+                <% } %>
+          </div>
+        
+      <% } else {%>
+        <div class="row">
+          <div class="col-md-12">
+            No Product Found
+          </div>
+        </div>
+      <%  } %>
+    </div>
+
+        
+      
+
+    </main>
+
+
+<%- include('../layouts/footer.ejs') %>

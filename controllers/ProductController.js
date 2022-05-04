@@ -42,3 +42,17 @@ exports.addProduct = (req, res, next) => {
     
     //res.render('list-product.ejs', {pdts: products});
 // }
+
+
+exports.getProductListAdmin = (req, res, next) => {
+        Product.fetchAll(products => {
+            res.render('admin/product.ejs', {pageTitle: "Admin Product List", pdts: products});
+    });
+    
+};
+
+exports.getEditProductAdmin = (req, res, next) => {
+    const productId = req.params.id;
+    console.log(productId);
+    res.render('edit-product.ejs', {pageTitle: "Edit Product"});
+}
