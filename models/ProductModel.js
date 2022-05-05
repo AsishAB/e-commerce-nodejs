@@ -3,10 +3,21 @@ const path = require("path");
 const rootDir = require('../helpers/user-defined-path');
 const fs = require('fs');
 const p = path.join(rootDir, 'data', 'products.json');
+/*
+const getProductsFromFile = cb => {
+    fs.readFile(p, (err, fileContent) => {
+      if (err) {
+        cb([]);
+      } else {
+        cb(JSON.parse(fileContent));
+      }
+    });
+};
 
+*/
 module.exports = class Product {
     constructor(tlt, desc='', imgURL, price) {
-        this.productId = 2;
+        this.productId = Math.random().toString();
         this.title = tlt;
         this.description = desc;
         this.imageURL = (imgURL != '') ? imgURL : "https://live.staticflickr.com/5217/5471047557_4dc13f5376_n.jpg";
@@ -49,4 +60,37 @@ module.exports = class Product {
 
         //return products;
     }
+
+    static findById(id, cb) {
+        let products_arr = [];
+        fs.readFile(p, (err, fileContent) => {
+            if (!err) {
+                // If the file exists and has I/O Permission
+                products_arr = JSON.parse(fileContent);
+            }
+            const productById = products_arr.find(p => p.productId === id);
+            //{
+
+                //console.log(id);
+              //  p.productId === id; //An implicit or hidden return is included in such JavaScript functions
+           // });
+            //console.log(productById);
+            cb(productById);
+            
+
+
+        });
+        /* The above thing can also be done by this way.     getProductsFromFile is declared above as a global value 
+
+        // static findById(id, cb) {
+        //     getProductsFromFile(products => {
+                
+        //       const product = products.find(p => p.productId === id);
+        //       cb(product);
+        //     });
+        // }
+
+        */
+    }
+  
 }

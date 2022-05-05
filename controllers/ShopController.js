@@ -27,5 +27,12 @@ exports.getAllProducts = (req, res, next) => {
 
 
 exports.getProductDetail = (req, res, next) => {
-    res.render('product-detail.ejs', {pageTitle: "Product Detail"});
+    const productId = req.params.id;
+   
+    Product.findById(productId, productDetail => {
+        //console.log(product);
+        res.render('product-detail.ejs', {pageTitle: "Product Detail", product: productDetail});
+    });
+    //res.render('product-detail.ejs', {pageTitle: "Product Detail"});
 }
+

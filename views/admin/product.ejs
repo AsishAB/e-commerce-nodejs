@@ -14,9 +14,9 @@
                     <div class="card-body">
                       <h5 class="card-title"><%= pdts[i].title %></h5>
                       <p class="card-text"><%= pdts[i].description %></p>
-                      <p class="card-text"><%= pdts[i].price %></p>
-                      <a href="/admin/edit-product-admin/<%= pdts[i].productId %>" class="btn border border-primary text-primary">Edit</a> &nbsp;
-                      <a href="#" class="btn border border-danger text-danger">Delete</a>
+                      <p class="card-text"><span>₹ </span> <%= pdts[i].price %></p>
+                      <a href="/admin/edit-product/<%= pdts[i].productId %>" class="btn border border-primary text-primary">Edit</a> &nbsp;
+                      <a href="/admin/delete-product/<%= pdts[i].productId %>" class="btn border border-danger text-danger">Delete</a>
                     </div>
                   </div>
               </div>

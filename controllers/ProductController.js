@@ -11,15 +11,17 @@ exports.getAddProduct = (req, res, next) => {
 
 exports.addProduct = (req, res, next) => {
     //pdt.push({title:req.body.title});
+    const productId = (req.body.productId != '') ? req.body.productId : '';
     const title = req.body.title;
-    const description = req.body.description;
+    const description = req.body.desc;
     const price = req.body.price;
-    const imgURL = req.body.img_url;
-
-    const product = new Product(title,description,price,imgURL);
+    //const imgURL = req.body.img_url;
+    const imgURL = '';
+    console.log("Inside ProductController " + title + description + price + imgURL);
+    const product = new Product(title,description,imgURL,price);
     product.save();
     //console.log(product);
-    res.redirect('/admin/list-product');
+    res.redirect('/admin/product-list');
 }
 
 
@@ -53,6 +55,12 @@ exports.getProductListAdmin = (req, res, next) => {
 
 exports.getEditProductAdmin = (req, res, next) => {
     const productId = req.params.id;
-    console.log(productId);
-    res.render('edit-product.ejs', {pageTitle: "Edit Product"});
+   
+    Product.findById(productId, productDetail => {
+        //console.log(product);
+        res.render('edit-product.ejs', {pageTitle: "Edit Product", product: productDetail});
+    });
+    //console.log("Inside ShopController");
+    
+    //res.render('edit-product.ejs', {pageTitle: "Edit Product"});
 }
