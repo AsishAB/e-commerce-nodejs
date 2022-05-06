@@ -15,8 +15,10 @@
                       <h5 class="card-title"><%= pdts[i].title %></h5>
                       <p class="card-text"><%= pdts[i].description %></p>
                       <p class="card-text">₹ <%= pdts[i].price %></p>
+                      <a href="/shop/product-detail/<%= pdts[i].productId %>" class="btn border border-secondary">Details</a>
                       <form method="POST" action="/shop/addToCart">
-                        <button href="#" class="btn border border-parimary text-primary">Add to Cart</a>
+                          <button class="btn border border-parimary text-primary">Add to Cart</a>
+                          <input type="hidden" name="productId" id="productId" value="<%= pdts[i].productId %>">
                       </form>
                       
                     </div>

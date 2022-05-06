@@ -19,6 +19,9 @@ exports.getAllProducts = (req, res, next) => {
     // ];
 
     Product.fetchAll(products => {
+        products.forEach(element => {
+            element.description = element.description.substring(0,100) + "......";
+        });
         res.render('product-list.ejs', {pageTitle:"Product List" ,pdts: products});
     });
     

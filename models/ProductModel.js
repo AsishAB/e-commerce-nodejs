@@ -16,8 +16,9 @@ const getProductsFromFile = cb => {
 
 */
 module.exports = class Product {
-    constructor(tlt, desc='', imgURL, price) {
-        this.productId = Math.random().toString();
+    constructor(id,tlt, desc='', imgURL, price) {
+        this.productId = id;
+        //console.log("Inside ProductModel.js " + this.productId);
         this.title = tlt;
         this.description = desc;
         this.imageURL = (imgURL != '') ? imgURL : "https://live.staticflickr.com/5217/5471047557_4dc13f5376_n.jpg";
@@ -35,11 +36,28 @@ module.exports = class Product {
                 // If the file exists and has I/O Permission
                 products_arr = JSON.parse(fileContent);
             }
-            products_arr.push(this);
+            if (this.productId) {
+                //console.log("Inside ProductModel.js " + this.productId);
+                const existingProductIndex = products_arr.findIndex(p => p.productId === this.productId);
+                const updatedProducts = [...products_arr];
+                updatedProducts[existingProductIndex] = this;
+                //console.log("Inside ProductModel.js " + updatedProducts[existingProductIndex].title );
+                
+                fs.writeFile(p, JSON.stringify(updatedProducts), (err) => { //Notice updatedProducts is written
+                    console.log(err);
+                });
 
-            fs.writeFile(p, JSON.stringify(products_arr), (err) => {
-                console.log(err);
-            });
+            } else {
+                this.productId = Math.random().toString();
+                products_arr.push(this);
+                fs.writeFile(p, JSON.stringify(products_arr), (err) => { //Here products_arr is written
+                    console.log(err);
+                });
+            }
+            
+            
+
+            
 
         });
 

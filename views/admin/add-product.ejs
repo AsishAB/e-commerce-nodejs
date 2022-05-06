@@ -1,26 +1,53 @@
 <%- include('../layouts/main-layout.ejs') %>
+
+<% 
+  var productId,title,desc,img_url,price;
+  if (product) {
+    productId = product.productId;
+     title = product.title;
+     desc = product.description;
+     img_url = product.imageURL;
+     price = product.price;
+  } else {
+    productId = '';
+    title = '';
+    desc ='';
+    img_url = '';
+    price = '';
+  }
+
+%>
     <main>
     <div class="container">
       <div class="row">
         <form action="/admin/add-product" method="POST">
+          <input type="hidden" class="form-control" id="productId" name="productId" value="<%= productId %>">
           <div class="mb-3">
+           
             <label for="title" class="form-label">Title</label>
-            <input type="text" class="form-control" id="title" name="title">
+            <input type="text" class="form-control" id="title" name="title" value="<%= title %>" >
             
           </div>
           <div class="mb-3">
             <label for="desc" class="form-label">Description</label>
-            <textarea class="form-control" id="desc" name="desc"></textarea>
+            <textarea class="form-control" id="desc" name="desc"><%= desc %></textarea>
           </div>
           <div class="mb-3">
             <label for="img_url" class="form-label">Image URL</label>
             <input type="file" class="form-control" id="img_url" name="img_url">
           </div>
+          <% if (img_url) { %>
+            <div class="mb-3">
+              <label for="img_url" class="form-label">Old Image</label>
+              <br>
+              <img src="<%= img_url  %>" alt="<%= title %>" height="150px" width="150px">
+            </div>
+          <% } %>
           <div class="mb-3">
             <label for="price" class="form-label">Price</label>
-            <input type="text" class="form-control" id="price" name="price">
+            <input type="text" class="form-control" id="price" name="price" value="<%= price %>">
           </div>
-          <button type="submit" class="btn btn-primary">Submit</button>
+          <button type="submit" class="btn btn-primary"><% if (!productId) { %> Add Product <% } else { %> Edit Product <% } %></button>
         </form>
 
       </div>
