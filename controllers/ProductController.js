@@ -46,6 +46,12 @@ exports.addProduct = (req, res, next) => {
     res.redirect('/admin/product-list');
 }
 
+exports.deleteProduct = (req, res, next) => {
+    const prodId = req.body.productId;
+    Product.deleteById(prodId);
+    res.redirect('/admin/product-list');
+};
+
 
 // exports.listAllProducts = (req, res, next) => {
 //     // res.sendFile(path.join(__dirname, '../' ,'views', 'shop.html')); //This is ALSO correct

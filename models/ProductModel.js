@@ -63,7 +63,18 @@ module.exports = class Product {
 
     }
 
-
+    static deleteById(id) {
+        //Item must also be deleted from cart
+        fs.readFile(p, (err, fileContent) => {
+            fileContent = JSON.parse(fileContent);
+            const updatedProducts = fileContent.filter(pd => pd.productId !== id);
+            fs.writeFile(p, JSON.stringify(updatedProducts), (err) => {
+                if(err) {
+                    console.log("Inside Product Model " + err);
+                }
+            });
+        });
+    }
 
     static fetchAll(cb) { //cb is a callback, which returns a value
         

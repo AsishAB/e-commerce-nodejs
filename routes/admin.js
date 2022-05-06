@@ -22,9 +22,9 @@ router.get('/product-list', productController.getProductListAdmin);
 
 // router.get('/edit-product/:id', productController.getEditProductAdmin);
 
-router.get('/edit-product/:id', productController.getAddProduct);
+router.get('/edit-product/:id', productController.getAddProduct); //Add and Edit in the same function
 
-router.post('/delete-product', productController.getEditProductAdmin);
+router.post('/delete-product', productController.deleteProduct);
 
 
 // module.exports = router;
