@@ -2,25 +2,22 @@ const Product = require('../models/ProductModel');
 
 
 exports.getAddProduct = (req, res, next) => {
-    // res.sendFile('/views/add-product.html'); //This will mean that th efile will be searched in the Windos directory C:// ....
-    // res.sendFile(path.join(__dirname, '..' , 'views', 'add-product.html')); //No "/" to be used, as we use "join"
-    //res.sendFile(path.join(rootDir , 'views', '/admin/add-product.html'));
+    
     const prodId = req.params.id;
     if (prodId == '' || prodId == undefined || prodId == null ) {
 
         res.render('add-product.ejs',{pageTitle: "Add Product",product: []});
     } else {
-        Product.findById(prodId, productDetail => {
-            //console.log(product);
-            if(!productDetail) {
-                console.log("Inside Prouct Controller - No Product Found");
-                res.redirect('/admin/product-list');
-                
-            } else {
-                res.render('add-product.ejs', {pageTitle: "Edit Product", product: productDetail});
-            }
-            
-        });
+        Product.findById(prodId)
+            .then( ([rows]) => {
+                res.render('add-product.ejs', {pageTitle: "Edit Product", product: rows[0]});
+            })  
+            .catch(err => {
+                console.log("Inside ProductController \n");
+                console.log(err);
+            }); 
+
+        
     }
 
 }
@@ -41,57 +38,62 @@ exports.addProduct = (req, res, next) => {
         product = new Product(productId,title,description,imgURL,price);
     }
     
-    product.save();
+    product.save()
+        .then(() => {
+            //console.log(response);
+            res.redirect('/admin/product-list');
+        })
+        .catch(err => {
+            console.log("Inside Product Controller.js");
+            console.log(err);
+        });
+    
     //console.log(product);
-    res.redirect('/admin/product-list');
+   // res.redirect('/admin/product-list');
 }
 
 exports.deleteProduct = (req, res, next) => {
-    const prodId = req.body.productId;
-    Product.deleteById(prodId);
+    
     res.redirect('/admin/product-list');
 };
 
 
-// exports.listAllProducts = (req, res, next) => {
-//     // res.sendFile(path.join(__dirname, '../' ,'views', 'shop.html')); //This is ALSO correct
-//     //res.sendFile(path.join(__dirname, '..' ,'views', 'shop.html'));
-
-//     //const products = Product.fetchAll() ;
-//     //console.log(products);
-//     // products = [ {title:'Pdt1', desc: 'Book 1' },
-//     //             {title:'Pdt2', desc: 'Book 2' },
-//     //             {title:'Pdt3', desc: 'Book 3' },
-//     //             {title:'Pdt4', desc: 'Book 4' },
-
-//     // ];
-
-//     Product.fetchAll(products => {
-//         res.render('product-list.ejs', {pdts: products});
-//     });
-    
-    //res.render('list-product.ejs', {pdts: products});
-// }
-
 
 exports.getProductListAdmin = (req, res, next) => {
-        Product.fetchAll(products => {
-            products.forEach(element => {
-                element.description = element.description.substring(0,100) + "......";
-            });
-            res.render('admin/product.ejs', {pageTitle: "Admin Product List", pdts: products});
+    Product.fetchAll()
+    .then(([rows, fieldData]) => { //fieldData is optional
+        rows.forEach(element => {
+            element.TP_Product_Description = element.TP_Product_Description.substring(0,100) + "......";
+        });
+        res.render('admin/product.ejs', {pageTitle: "Admin Product List", pdts: rows});
+    })
+    .catch(err => {
+        console.log("Inside ProductController \n");
+        console.log(err);
     });
-    
 };
+           
+    
 
 exports.getEditProductAdmin = (req, res, next) => {
     const productId = req.params.id;
    
-    Product.findById(productId, productDetail => {
-        //console.log(product);
-        res.render('edit-product.ejs', {pageTitle: "Edit Product", product: productDetail});
-    });
+    Product.findById(productId)
+        .then( ([rows]) => {
+            res.render('edit-product.ejs', {pageTitle: "Edit Product", product: rows[0]});
+        })  
+        .catch(err => {
+            console.log("Inside ProductController \n");
+            console.log(err);
+        }); 
+        
+   
     //console.log("Inside ShopController");
     
     //res.render('edit-product.ejs', {pageTitle: "Edit Product"});
 }
+
+
+
+
+

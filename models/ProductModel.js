@@ -1,20 +1,9 @@
 const products = [];
-const path = require("path");
-const rootDir = require('../helpers/user-defined-path');
-const fs = require('fs');
-const p = path.join(rootDir, 'data', 'products.json');
-/*
-const getProductsFromFile = cb => {
-    fs.readFile(p, (err, fileContent) => {
-      if (err) {
-        cb([]);
-      } else {
-        cb(JSON.parse(fileContent));
-      }
-    });
-};
 
-*/
+
+const db = require('../helpers/database-mysql');
+
+
 module.exports = class Product {
     constructor(id,tlt, desc='', imgURL, price) {
         this.productId = id;
@@ -26,8 +15,57 @@ module.exports = class Product {
     }
 
 
-    //For methods - i.e functions which are a part of a class, the keyword "function" is not used 
+   
     save() {
+        if (this.productId) {
+            return db.execute("UPDATE tbl_products SET TP_Product_Title = ?, TP_Product_Description = ?, TP_Image_URL = ?, TP_Product_Price = ?  WHERE TP_ProductId = ? ", [this.title,this.description,this.imageURL,this.price,this.productId]);
+        } else {
+            return db.execute("INSERT INTO tbl_products (TP_Product_Title, TP_Product_Description, TP_Image_URL, TP_Product_Price) VALUES (?, ?, ?, ? )", [this.title ,this.description , this.imageURL , this.price]);
+       
+        }
+            
+    }
+
+    static deleteById(id) {
+        return db.execute("UPDATE tbl_products SET TP_Product_DeletedFlag = true WHERE TP_ProductId = ? ", [id]);
+    }
+
+    static fetchAll() { 
+        return db.execute('SELECT * FROM tbl_products');
+    }
+
+    static findById(id) {
+        return db.execute("SELECT * FROM tbl_products WHERE TP_ProductId = ? ", [id]);
+    }
+  
+}
+
+
+
+
+/* 
+====================================================================================================
+To work with File Systems, rather than Databases
+======================================================================================================
+
+// const path = require("path");
+// const rootDir = require('../helpers/user-defined-path');
+// const fs = require('fs');
+// const p = path.join(rootDir, 'data', 'products.json');
+
+
+// const getProductsFromFile = cb => {
+//     fs.readFile(p, (err, fileContent) => {
+//       if (err) {
+//         cb([]);
+//       } else {
+//         cb(JSON.parse(fileContent));
+//       }
+//     });
+// };
+
+
+save() {
         //products.push(this);
         
         let products_arr = [];
@@ -109,7 +147,7 @@ module.exports = class Product {
 
 
         });
-        /* The above thing can also be done by this way.     getProductsFromFile is declared above as a global value 
+        // The above thing can also be done by this way.     getProductsFromFile is declared above as a global value 
 
         // static findById(id, cb) {
         //     getProductsFromFile(products => {
@@ -119,7 +157,7 @@ module.exports = class Product {
         //     });
         // }
 
-        */
+        //
     }
-  
-}
+
+*/

@@ -8,9 +8,16 @@ const path = require("path");
 const indexRoutes = require('./routes/index');
 const adminData = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
-
 const rootDir = require("./helpers/user-defined-path");
 const htmlError = require('./controllers/HtmlErrorController');
+const db = require('./helpers/database-mysql');
+
+db.query("SELECT * FROM tbl_products").then(result => {
+    // console.log(result[0]);
+}).catch(err => {
+    console.log("In app js- err " + err);
+});
+
 
 app.use(bodyParser.urlencoded({extended:false}));
 

@@ -6,6 +6,28 @@ exports.getShopIndexPage = (req, res, next) => {
 }
 
 exports.getAllProducts = (req, res, next) => {
+   Product.fetchAll()
+        .then(([rows, fieldData]) => {
+            res.render('product-list.ejs', {pageTitle:"Product List" ,pdts: rows});
+        })
+        .catch(err => {
+
+        });
+}
+
+
+exports.getProductDetail = (req, res, next) => {
+    
+}
+
+
+
+
+
+/* 
+
+
+exports.getAllProducts = (req, res, next) => {
     // res.sendFile(path.join(__dirname, '../' ,'views', 'shop.html')); //This is ALSO correct
     //res.sendFile(path.join(__dirname, '..' ,'views', 'shop.html'));
 
@@ -39,3 +61,4 @@ exports.getProductDetail = (req, res, next) => {
     //res.render('product-detail.ejs', {pageTitle: "Product Detail"});
 }
 
+*/

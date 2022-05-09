@@ -3,11 +3,11 @@
 <% 
   var productId,title,desc,img_url,price;
   if (product) {
-    productId = product.productId;
-     title = product.title;
-     desc = product.description;
-     img_url = product.imageURL;
-     price = product.price;
+    productId = product.TP_ProductId;
+     title = product.TP_Product_Title;
+     desc = product.TP_Product_Description;
+     img_url = product.TP_Image_URL;
+     price = product.TP_Product_Price;
   } else {
     productId = '';
     title = '';
