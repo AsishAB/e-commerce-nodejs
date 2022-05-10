@@ -50,21 +50,22 @@ app.use(express.static(path.join(__dirname, 'public'))); //express.static is use
 
 app.use(htmlError.get404Page); //To display 404 page
 
-app.use( (req, res, next) => {
-    db.query("SELECT * FROM tbl_users WHERE TUM_Id = ? ", [1])
-        .then( ([rows]) => {
-            console.log("In app.js");
-            console.log(rows[0].TUM_Id);
-            req.users = rows[0].TUM_Id;
-        })
-        .catch(err => {
-            console.log("In app.js");
-            console.log(err); 
-        });
+// app.use( (req, res, next) => {
+//     db.query("SELECT * FROM tbl_users WHERE TUM_Id = ? ", [1])
+//         .then( ([rows]) => {
+//             console.log("In app.js");
+//             console.log(rows[0].TUM_Id);
+//             req.users = rows[0].TUM_Id;
+//             next();
+//         })
+//         .catch(err => {
+//             console.log("In app.js");
+//             console.log(err); 
+//         });
+// });
 
-        next();
         
-});
+        
 
 
 /*  sequelize.sync() is used to generate tables for all Sequelise objects (example- cart, product etc.) directly in the database */
