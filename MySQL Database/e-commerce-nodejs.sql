@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 8.0.28, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.25, for Win64 (x86_64)
 --
 -- Host: localhost    Database: e-commerce-nodejs
 -- ------------------------------------------------------
--- Server version	8.0.28
+-- Server version	8.0.25
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -29,7 +29,7 @@ CREATE TABLE `tbl_cart` (
   `TC_UpdatedAt` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`TC_Id`),
   UNIQUE KEY `TC_Id_UNIQUE` (`TC_Id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -38,6 +38,7 @@ CREATE TABLE `tbl_cart` (
 
 LOCK TABLES `tbl_cart` WRITE;
 /*!40000 ALTER TABLE `tbl_cart` DISABLE KEYS */;
+INSERT INTO `tbl_cart` VALUES (1,'1','2022-05-12 15:11:17',NULL),(2,'1','2022-05-12 15:11:18',NULL),(3,'1','2022-05-12 15:11:20',NULL);
 /*!40000 ALTER TABLE `tbl_cart` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -55,9 +56,10 @@ CREATE TABLE `tbl_cart_items` (
   `TCI_ProductId` varchar(45) DEFAULT NULL,
   `TCI_Created_Time` timestamp NULL DEFAULT NULL,
   `TCI_Updated_Time` timestamp NULL DEFAULT NULL,
+  `TCI_CartItem_AddedBy` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`TCI_Id`),
   UNIQUE KEY `TCI_Id_UNIQUE` (`TCI_Id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -66,6 +68,7 @@ CREATE TABLE `tbl_cart_items` (
 
 LOCK TABLES `tbl_cart_items` WRITE;
 /*!40000 ALTER TABLE `tbl_cart_items` DISABLE KEYS */;
+INSERT INTO `tbl_cart_items` VALUES (1,'2','1','1',NULL,NULL,NULL),(2,'2','2','2',NULL,NULL,NULL),(3,'2','3','4',NULL,NULL,NULL);
 /*!40000 ALTER TABLE `tbl_cart_items` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -97,7 +100,7 @@ CREATE TABLE `tbl_products` (
 
 LOCK TABLES `tbl_products` WRITE;
 /*!40000 ALTER TABLE `tbl_products` DISABLE KEYS */;
-INSERT INTO `tbl_products` VALUES (1,'Book 1','Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.','https://live.staticflickr.com/5217/5471047557_4dc13f5376_n.jpg',NULL,'',NULL,NULL,NULL),(2,'Book 22','Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.','https://live.staticflickr.com/5217/5471047557_4dc13f5376_n.jpg','',NULL,NULL,NULL,NULL),(3,'Book 3','Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.','https://live.staticflickr.com/5217/5471047557_4dc13f5376_n.jpg',NULL,NULL,NULL,NULL,NULL),(4,'Book 4','Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.','https://live.staticflickr.com/5217/5471047557_4dc13f5376_n.jpg',NULL,NULL,NULL,NULL,NULL),(5,'Book 5','Loren Ipsum','https://live.staticflickr.com/5217/5471047557_4dc13f5376_n.jpg','400',NULL,NULL,NULL,NULL),(6,'Book 6','Loreingmklwr','https://live.staticflickr.com/5217/5471047557_4dc13f5376_n.jpg','200',NULL,NULL,NULL,NULL);
+INSERT INTO `tbl_products` VALUES (1,'Book 1','Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.','https://live.staticflickr.com/5217/5471047557_4dc13f5376_n.jpg','200','',NULL,NULL,NULL),(2,'Book 22','Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.','https://live.staticflickr.com/5217/5471047557_4dc13f5376_n.jpg','200',NULL,NULL,NULL,NULL),(3,'Book 3','Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.','https://live.staticflickr.com/5217/5471047557_4dc13f5376_n.jpg','200',NULL,NULL,NULL,NULL),(4,'Book 4','Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.','https://live.staticflickr.com/5217/5471047557_4dc13f5376_n.jpg','200',NULL,NULL,NULL,NULL),(5,'Book 5','Loren Ipsum','https://live.staticflickr.com/5217/5471047557_4dc13f5376_n.jpg','200',NULL,NULL,NULL,NULL),(6,'Book 6','Loreingmklwr','https://live.staticflickr.com/5217/5471047557_4dc13f5376_n.jpg','200',NULL,NULL,NULL,NULL);
 /*!40000 ALTER TABLE `tbl_products` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -198,4 +201,4 @@ SET character_set_client = @saved_cs_client;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-05-11 12:57:47
+-- Dump completed on 2022-05-12 22:11:19

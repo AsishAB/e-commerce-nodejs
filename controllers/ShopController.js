@@ -7,7 +7,10 @@ exports.getShopIndexPage = (req, res, next) => {
 
 exports.getAllProducts = (req, res, next) => {
    Product.fetchAll()
-        .then(([rows, fieldData]) => {
+        .then(([rows]) => {
+            rows.forEach(element => {
+                element.TP_Product_Description = element.TP_Product_Description.substring(0,100) + "......";
+            });
             res.render('product-list.ejs', {pageTitle:"Product List" ,pdts: rows});
         })
         .catch(err => {

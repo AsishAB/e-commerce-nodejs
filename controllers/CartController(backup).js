@@ -3,12 +3,7 @@ const db = require("../helpers/database-mysql");
 
 
 exports.getCart = (req, res, next) => {
-    const userId = 1;
-    db.query("SELECT * FROM vw_cart_items WHERE TC_Cart_CreatedBy = ? ", [userId])
-        .then(([rows]) => {
-            res.render('cart.ejs', { pageTitle: "Cart", cartItems: rows });
-        });
-    
+    res.render('cart.ejs',{ pageTitle: "Cart" });
 };
 
 exports.addToCart = (req, res, next) => {
@@ -21,11 +16,11 @@ exports.addToCart = (req, res, next) => {
             if(cartRows.length == 0) {
                 db.query("INSERT INTO tbl_cart (TC_CreatedBy) VALUES (?)", [userId])
                     .then(([rows]) => {
-                        //console.log("Inside CartController.js-- Add to Cart Post request --> Cart Added Successfully ");
-                       // console.log(rows.insertId);
+                        // console.log("Inside CartController.js-- Add to Cart Post request --> Cart Added Successfully ");
+                        // console.log(rows.insertId);
                         db.query("INSERT INTO tbl_cart_items (TCI_Quantity,TCI_CartId , TCI_ProductId) VALUES (?, ?, ?)", [userId,rows.insertId, prodId])
                         .then(() => {
-                           // console.log("Inside CartController.js-- Add to Cart Post request --> Cart Added Successfully ");
+                            //console.log("Inside CartController.js-- Add to Cart Post request --> Cart Added Successfully ");
                         })
                         .catch(err => {
                             console.log("Err Inside CartController.js-- Add to Cart Post request ");
@@ -35,26 +30,24 @@ exports.addToCart = (req, res, next) => {
                        
                     })
                     .catch(err => {
-                        //console.log(" Err Inside CartController.js-- Add to Cart Post request ");
-                        //console.log(err);
+                        console.log(" Err Inside CartController.js-- Add to Cart Post request ");
+                        console.log(err);
                     });
 
                   
 
                 
             } else {
-                //console.log("Here");
-                const updatedQuantity = Number(cartRows[0].TCI_Quantity) + 1; //Add 1, if the product already exists
-                //console.log("updatedQuantity " + updatedQuantity);
-                db.query("UPDATE tbl_cart_items SET TCI_Quantity = ? WHERE TCI_CartId = ? AND TCI_ProductId = ?", [updatedQuantity, cartRows[0].TC_Cart_Id, prodId])
-                    .then(() => {
-                            console.log("Inside CartController.js-- Add to Cart Post request --> Cart Updated Successfully ");
+                console.log("Here");
+                const updatedQuantity = cartRows[0].TCI_Quantity + 1;
+                console.log("Update quantity = " + updatedQuantity);
+                db.query("SELECT  * FROM vw_cart_items WHERE TC_Cart_CreatedBy = ? AND TCI_ProductId = ? LIMIT 1", [userId , prodId])
+                    .then(([rows]) => {
+                        db.query("UPDATE tbl_cart_items SET TCI_Quantity = ? WHERE TCI_CartId = ? AND TCI_ProductId = ?", [updatedQuantity, rows[0].TCI_CartId, prodId])
+                            .then(() => {
+                                    console.log("Inside CartController.js-- Add to Cart Post request --> Cart Updated Successfully ");
+                            })
                     })
-                    .catch(err =>{
-                        console.log("Inside CartController.js");
-                        console.log(err);
-                    });
-              
                 
             }
         })
@@ -64,5 +57,5 @@ exports.addToCart = (req, res, next) => {
         });
 
 
-    res.redirect('/shop/cart');
+    //res.redirect('/shop/cart');
 };
