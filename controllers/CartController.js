@@ -4,9 +4,14 @@ const db = require("../helpers/database-mysql");
 
 exports.getCart = (req, res, next) => {
     const userId = 1;
+    var totalPrice = 0;
     db.query("SELECT * FROM vw_cart_items WHERE TC_Cart_CreatedBy = ? ", [userId])
         .then(([rows]) => {
-            res.render('cart.ejs', { pageTitle: "Cart", cartItems: rows });
+            rows.forEach(element => {
+                const price = element.TCI_Quantity * element.TP_Product_Price;
+                totalPrice += price;
+            });
+            res.render('cart.ejs', { pageTitle: "Cart", cartItems: rows, totalPrice: totalPrice});
         });
     
 };
@@ -65,4 +70,19 @@ exports.addToCart = (req, res, next) => {
 
 
     res.redirect('/shop/cart');
+};
+
+
+exports.removeItemFromCart = (req, res, next) => {
+    const cartId = req.body.cart_id;
+    db.query("DELETE FROM tbl_cart_items WHERE TCI_Id = ?", [cartId])   
+        .then(result => {
+            // console.log("Inside CartController, removeItemFromCart");
+            // console.log(result);
+            res.redirect('/shop/cart');
+        })
+        .catch(err => {
+            console.log("Inside CartController, removeItemFromCart");
+            console.log(err);
+        });
 };
