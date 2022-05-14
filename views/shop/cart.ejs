@@ -5,7 +5,7 @@
     <div class="row">
         <% if (cartItems.length <= 0) { %>
         <aside class="col-lg-9">
-            <h2>No Items in Cart</h2>
+            <h2>No Items in Cart </h2>
         </aside>
         <% } else { %>
         <aside class="col-lg-9">
@@ -93,7 +93,7 @@
                         <dd class="text-right text-dark b ml-3"><strong>₹<%= totalPrice %></strong></dd>
                     </dl>
                     <hr> 
-                    <a href="#" class="btn btn-out btn-primary btn-square btn-main" data-abc="true"> Continue to Checkout </a> 
+                    <a href="/shop/checkout" class="btn btn-out btn-primary btn-square btn-main" data-abc="true"> Continue to Checkout </a> 
                     <a href="/shop/products" class="btn btn-out btn-success btn-square btn-main mt-2" data-abc="true">Continue Shopping</a>
                 </div>
             </div>

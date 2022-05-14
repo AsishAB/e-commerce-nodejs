@@ -5,7 +5,7 @@ const db = require("../helpers/database-mysql");
 exports.getCart = (req, res, next) => {
     const userId = 1;
     var totalPrice = 0;
-    db.query("SELECT * FROM vw_cart_items WHERE TC_Cart_CreatedBy = ? ", [userId])
+    db.query("SELECT * FROM vw_cart_items WHERE TCI_CartItem_AddedBy = ? ", [userId])
         .then(([rows]) => {
             rows.forEach(element => {
                 const price = element.TCI_Quantity * element.TP_Product_Price;
@@ -20,7 +20,7 @@ exports.addToCart = (req, res, next) => {
     const prodId = req.body.productId;
     const userId = 1;
     //console.log("Inside CartController.js-- Add to Cart Post request --> Product Id = " + prodId);
-    db.query("SELECT * FROM vw_cart_items WHERE TCI_ProductId = ? AND TC_Cart_CreatedBy = ? ", [prodId, userId])
+    db.query("SELECT * FROM vw_cart_items WHERE TCI_ProductId = ? AND TCI_CartItem_AddedBy = ? ", [prodId, userId])
         .then(([cartRows]) => {
             //console.log(cartRows);
             if(cartRows.length == 0) {
@@ -28,7 +28,7 @@ exports.addToCart = (req, res, next) => {
                     .then(([rows]) => {
                         //console.log("Inside CartController.js-- Add to Cart Post request --> Cart Added Successfully ");
                        // console.log(rows.insertId);
-                        db.query("INSERT INTO tbl_cart_items (TCI_Quantity,TCI_CartId , TCI_ProductId) VALUES (?, ?, ?)", [userId,rows.insertId, prodId])
+                        db.query("INSERT INTO tbl_cart_items (TCI_Quantity,TCI_CartId , TCI_ProductId,TCI_CartItem_AddedBy) VALUES (?, ?, ?, ?)", [1,rows.insertId, prodId,userId])
                         .then(() => {
                            // console.log("Inside CartController.js-- Add to Cart Post request --> Cart Added Successfully ");
                         })

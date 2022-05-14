@@ -11,7 +11,7 @@ const shopRoutes = require("./routes/shop");
 const rootDir = require("./helpers/user-defined-path");
 const htmlError = require('./controllers/HtmlErrorController');
 const db = require('./helpers/database-mysql');
-const sequelize = require('./helpers/database-using-sequelize');
+//const sequelize = require('./helpers/database-using-sequelize');
 
 
 
@@ -19,7 +19,8 @@ const sequelize = require('./helpers/database-using-sequelize');
 db.query("SELECT * FROM tbl_products").then(result => {
     // console.log(result[0]);
 }).catch(err => {
-    console.log("In app js- err " + err);
+    console.log("In app js- err ")
+    console.log(err);
 });
 
 
@@ -69,14 +70,14 @@ app.use(htmlError.get404Page); //To display 404 page
 
 
 /*  sequelize.sync() is used to generate tables for all Sequelise objects (example- cart, product etc.) directly in the database */
-sequelize.sync()
-    .then(result => {
-        //console.log(result);
-    })
-    .catch(err => {
-        // console.log("Inside app.js");
-        // console.log(err);
-    });
+// sequelize.sync()
+//     .then(result => {
+//         //console.log(result);
+//     })
+//     .catch(err => {
+//         // console.log("Inside app.js");
+//         // console.log(err);
+//     });
 
   
 
