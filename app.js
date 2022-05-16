@@ -13,15 +13,8 @@ const htmlError = require('./controllers/HtmlErrorController');
 const db = require('./helpers/database-mysql');
 //const sequelize = require('./helpers/database-using-sequelize');
 
+const MongoConnect = require("./helpers/database-mongodb");
 
-
-
-db.query("SELECT * FROM tbl_products").then(result => {
-    // console.log(result[0]);
-}).catch(err => {
-    console.log("In app js- err ")
-    console.log(err);
-});
 
 
 app.use(bodyParser.urlencoded({extended:false}));
@@ -37,9 +30,9 @@ app.set('views', [
     path.join(rootDir, 'views/htmlerrors'),
     path.join(rootDir, 'views/shop')
 
-
-
 ]);
+
+
 
 
 app.use('/', indexRoutes);
@@ -83,6 +76,10 @@ app.use(htmlError.get404Page); //To display 404 page
 
 const port = process.env.PORT || 3000;
 
-app.listen(port, () => {
-    console.log(`E-Commerce app listening on port ${port} - http://localhost:${port}`)
+MongoConnect((client) => {
+    console.log("Inside app.js, MongoConnect");
+    console.log(client);
+    app.listen(port, () => {
+        console.log(`E-Commerce app listening on port ${port} - http://localhost:${port}`)
+    });
 });
