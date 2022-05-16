@@ -1,5 +1,5 @@
+const uri = require("./passwords/mongodb-url");
 
-const uri = "mongodb+srv://RememberMeAsish:vUarAawV333Dx2n1@asishcluster.rjwov.mongodb.net/?retryWrites=true&w=majority";
 
 
 // const { MongoClient, ServerApiVersion } = require('mongodb');
