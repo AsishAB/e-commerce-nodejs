@@ -8,10 +8,18 @@
 
             <div class="card">
 
-
-                    <div class="text-left logo p-2 px-5">
-
-                        <img src="https://i.imgur.com/2zDU056.png" width="50">
+               
+                    <div class="text-left logo ">
+                        <div class="p-2 px-5 text-left">
+                            <a href="/shop/products">
+                                <i class="fa-solid fa-arrow-left-long fa-2x"></i>
+                            </a>
+                            
+                        </div>
+                        <div class="p-2 px-5 text-center">
+                            <img src="/assets/order-confirmation/orderconfirmation.jpg" width="100">
+                        
+                        </div>
                         
 
                     </div>
@@ -33,7 +41,7 @@
                                             <div class="py-2">
 
                                                 <span class="d-block text-muted">Order Date</span>
-                                            <span><%= orderDetails[0].TO_Created_On %></span>
+                                            <span><%= order.orderDetails[0].TOI_Created_On %></span>
                                                 
                                             </div>
                                         </td>
@@ -42,7 +50,7 @@
                                             <div class="py-2">
 
                                                 <span class="d-block text-muted">Order No</span>
-                                            <span><%= paymentDetails.orderId %></span>
+                                            <span><%= order.orderDetails[0].TOI_Order_Id %></span>
                                                 
                                             </div>
                                         </td>
@@ -83,24 +91,27 @@
                                 <table class="table table-borderless">
 
                                 <tbody>
-                                    <% for (let i = 0; i < orderDetails.length; i++) { %>
+                                    <% for (let i = 0; i < order.orderDetails.length; i++) { %>
                                     <tr>
                                         <td width="20%">
-                                        
-                                        <img src="<%= orderDetails[i].TP_Image_URL %>"  width="90">
+                                            <a href="/shop/product-detail/<%= order.orderDetails[i].TOI_Product_Id %>" target="_blank" class="title text-dark" data-abc="true">
+                                                <img src="<%= order.orderDetails[i].TP_Image_URL %>"  width="90">
+                                            </a>
 
                                     </td>
                                 
                                     <td width="60%">
-                                        <span class="font-weight-bold"> <%= orderDetails[i].TP_Product_Title %></span>
+                                        <a href="/shop/product-detail/<%= order.orderDetails[i].TOI_Product_Id %>" target="_blank" class="title text-dark" data-abc="true">
+                                            <span class="font-weight-bold"> <%= order.orderDetails[i].TP_Product_Title %></span>
+                                        </a>
                                         <div class="product-qty">
-                                            <span class="d-block">Quantity:  <%= orderDetails[i].TOI_Quantity %></span>
+                                            <span class="d-block">Quantity:  <%= order.orderDetails[i].TOI_Quantity %></span>
                                             
                                         </div>
                                     </td>
                                     <td width="20%">
                                         <div class="text-right">
-                                            <span class="font-weight-bold">₹ <%= orderDetails[i].TP_Product_Price * orderDetails[i].TOI_Quantity  %></span>
+                                            <span class="font-weight-bold">₹ <%= order.orderDetails[i].TP_Product_Price * order.orderDetails[i].TOI_Quantity  %></span>
                                         </div>
                                     </td>
                                     </tr>
@@ -134,7 +145,7 @@
                                                 </td>
                                                 <td>
                                                     <div class="text-right">
-                                                        <span>₹ <%= paymentDetails.totalPrice  %></span>
+                                                        <span>₹ <%= order.totalPrice  %></span>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -150,7 +161,7 @@
                                                 </td>
                                                 <td>
                                                     <div class="text-right">
-                                                        <span>₹ <%= paymentDetails.shippingPrice  %></span>
+                                                        <span>₹ <%= order.shippingPrice  %></span>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -198,9 +209,10 @@
                                                 </td>
                                                 <td>
                                                     <div class="text-right">
-                                                        <span class="font-weight-bold">₹ <%= paymentDetails.grandTotal  %></span>
+                                                        <span class="font-weight-bold">₹ <%= order.grandTotal  %></span>
                                                     </div>
                                                 </td>
+                                                
                                             </tr>
                                             
                                         </tbody>
@@ -216,7 +228,13 @@
 
                             <p>We will be sending shipping confirmation email when the item shipped successfully!</p>
                             <p class="font-weight-bold mb-0">Thanks for shopping with us!</p>
-                            <span>Nike Team</span>
+                            <span>E-Commerce Team</span>
+                            <div class="row">
+                                <div class="col-md-12 text-center">
+                                    <a class="btn btn-primary" href="/shop/products"><i class="fa-solid fa-arrow-left-long"></i> Back to Store</a>
+                                </div>
+                            </div>
+                            
 
 
 
@@ -228,7 +246,7 @@
                     <div class="d-flex justify-content-between footer p-3">
 
                         <span>Need Help? visit our <a href="#"> help center</a></span>
-                         <span>12 June, 2020</span>
+                         <span id="currentDate"></span>
                         
                     </div>
 
@@ -242,4 +260,13 @@
     </div>
     
 </div>
+
+<script>
+    var year, month, date;
+    const d = new Date();
+    year = d.getFullYear();
+    month  = "0" + Number(d.getMonth() + 1);
+    date = d.getDate();
+    document.getElementById('currentDate').innerHTML = date + "-" + month + "-" + year;
+</script>
 <%- include('../layouts/footer.ejs') %>

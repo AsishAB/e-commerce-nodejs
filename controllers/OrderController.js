@@ -70,22 +70,26 @@ exports.getOrderConfirmation = (req, res, next) => {
     var shippingPrice = 200;
     
     
-    db.query("SELECT * FROM vw_order_details WHERE TO_Order_Id = ?", [orderId])
+    db.query("SELECT * FROM vw_order_details WHERE TOI_Order_Id = ?", [orderId])
         .then(([result]) => {
             result.forEach(element => {
                 
                 const price = element.TCI_Quantity * element.TP_Product_Price;
                 totalPrice += price;
             });
-
-               
-            const paymentDetails = {
-                orderId:orderId,
+            const orderObject = {
+                orderDetails:result,
                 totalPrice:totalPrice,
                 shippingPrice:shippingPrice,
                 grandTotal:totalPrice + shippingPrice
-            }
-            res.render('order-confirmation.ejs', { pageTitle: "Order Confirmation", orderDetails : result,paymentDetails:paymentDetails });
+            }  
+            return orderObject;
+        })
+             
+            
+        .then(result => {
+            //console.log(result);
+            res.render('order-confirmation.ejs', { pageTitle: "Order Confirmation", order : result });
         })
         .catch(err => {
             console.log("Inside OrderController.js -> getOrderConfirmation");
