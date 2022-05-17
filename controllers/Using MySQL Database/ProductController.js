@@ -39,10 +39,9 @@ exports.addProduct = (req, res, next) => {
     }
     
     product.save()
-        .then((response) => {
-            // console.log("Inside Product Controller.js");
-            // console.log(response);
-            //res.redirect('/admin/product-list');
+        .then(() => {
+            //console.log(response);
+            res.redirect('/admin/product-list');
         })
         .catch(err => {
             console.log("Inside Product Controller.js");

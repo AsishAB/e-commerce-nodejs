@@ -13,7 +13,7 @@ const htmlError = require('./controllers/HtmlErrorController');
 const db = require('./helpers/database-mysql');
 //const sequelize = require('./helpers/database-using-sequelize');
 
-const MongoConnect = require("./helpers/database-mongodb");
+const MongoConnect = require("./helpers/database-mongodb").MongoConnect;
 
 
 
@@ -77,9 +77,13 @@ app.use(htmlError.get404Page); //To display 404 page
 const port = process.env.PORT || 3000;
 
 MongoConnect((client) => {
-    console.log("Inside app.js, MongoConnect");
-    console.log(client);
+    // console.log("Inside app.js, MongoConnect");
+    // console.log(client);
     app.listen(port, () => {
         console.log(`E-Commerce app listening on port ${port} - http://localhost:${port}`)
     });
 });
+
+// app.listen(port, () => {
+//             console.log(`E-Commerce app listening on port ${port} - http://localhost:${port}`)
+// });
