@@ -74,7 +74,7 @@ exports.getProductListAdmin = (req, res, next) => {
 };
            
     
-
+/*
 exports.getEditProductAdmin = (req, res, next) => {
     const productId = req.params.id;
    
@@ -92,7 +92,7 @@ exports.getEditProductAdmin = (req, res, next) => {
     
     //res.render('edit-product.ejs', {pageTitle: "Edit Product"});
 }
-
+*/
 
 
 

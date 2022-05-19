@@ -1,16 +1,20 @@
 const Product = require('../models/ProductModel');
-
+//const mongodb = require('mongodb');
 
 exports.getAddProduct = (req, res, next) => {
     
     const prodId = req.params.id;
     if (prodId == '' || prodId == undefined || prodId == null ) {
 
-        res.render('add-product.ejs',{pageTitle: "Add Product",product: []});
+        res.render('add-product.ejs',{ pageTitle: "Add Product",product: [] });
     } else {
         Product.findById(prodId)
-            .then( ([rows]) => {
-                res.render('add-product.ejs', {pageTitle: "Edit Product", product: rows[0]});
+            
+            .then(product => {
+                // console.log("Inside ProductController \n");
+                // console.log(product);
+
+                res.render('add-product.ejs', { pageTitle: "Edit Product", product: product });
             })  
             .catch(err => {
                 console.log("Inside ProductController \n");
@@ -35,7 +39,7 @@ exports.addProduct = (req, res, next) => {
     if (productId == '') {
         product = new Product(null,title,description,imgURL,price);
     } else {
-        product = new Product(productId,title,description,imgURL,price);
+        product = new Product(productId ,title,description,imgURL,price);
     }
     
     product.save()
@@ -54,19 +58,29 @@ exports.addProduct = (req, res, next) => {
 }
 
 exports.deleteProduct = (req, res, next) => {
+    const prodId  = req.body.productId;
+    Product.deleteById(prodId)
+    .then(() => {
+        // console.log("Inside Product Controller.js");
+        // console.log("Product Deleted");
+        res.redirect('/admin/product-list');
+    })
+    .catch(err => {
+        console.log("Inside Product Controller.js");
+        console.log(err);
+    });
     
-    res.redirect('/admin/product-list');
 };
 
 
 
 exports.getProductListAdmin = (req, res, next) => {
     Product.fetchAll()
-    .then(([rows, fieldData]) => { //fieldData is optional
-        rows.forEach(element => {
+    .then(products => { 
+        products.forEach(element => {
             element.TP_Product_Description = element.TP_Product_Description.substring(0,100) + "......";
         });
-        res.render('admin/product.ejs', {pageTitle: "Admin Product List", pdts: rows});
+        res.render('admin/product.ejs', {pageTitle: "Admin Product List", pdts: products});
     })
     .catch(err => {
         console.log("Inside ProductController \n");
@@ -75,26 +89,3 @@ exports.getProductListAdmin = (req, res, next) => {
 };
            
     
-
-exports.getEditProductAdmin = (req, res, next) => {
-    const productId = req.params.id;
-   
-    Product.findById(productId)
-        .then( ([rows]) => {
-            res.render('edit-product.ejs', {pageTitle: "Edit Product", product: rows[0]});
-        })  
-        .catch(err => {
-            console.log("Inside ProductController \n");
-            console.log(err);
-        }); 
-        
-   
-    //console.log("Inside ShopController");
-    
-    //res.render('edit-product.ejs', {pageTitle: "Edit Product"});
-}
-
-
-
-
-

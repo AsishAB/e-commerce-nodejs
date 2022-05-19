@@ -1,0 +1,272 @@
+<%- include('../layouts/main-layout.ejs') %>
+<link rel="stylesheet" href="/css/order-confirmation.css">
+<div class="container mt-5 mb-5">
+
+    <div class="row d-flex justify-content-center">
+
+        <div class="col-md-8">
+
+            <div class="card">
+
+               
+                    <div class="text-left logo ">
+                        <div class="p-2 px-5 text-left">
+                            <a href="/shop/products">
+                                <i class="fa-solid fa-arrow-left-long fa-2x"></i>
+                            </a>
+                            
+                        </div>
+                        <div class="p-2 px-5 text-center">
+                            <img src="/assets/order-confirmation/orderconfirmation.jpg" width="100">
+                        
+                        </div>
+                        
+
+                    </div>
+
+                    <div class="invoice p-5">
+
+                        <h5>Your order Confirmed!</h5>
+
+                        <span class="font-weight-bold d-block mt-4">Hello, Chris</span>
+                        <span>You order has been confirmed and will be shipped in next two days!</span>
+
+                        <div class="payment border-top mt-3 mb-3 border-bottom table-responsive">
+
+                            <table class="table table-borderless">
+                                
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <div class="py-2">
+
+                                                <span class="d-block text-muted">Order Date</span>
+                                            <span><%= order.orderDetails[0].TOI_Created_On %></span>
+                                                
+                                            </div>
+                                        </td>
+
+                                        <td>
+                                            <div class="py-2">
+
+                                                <span class="d-block text-muted">Order No</span>
+                                            <span><%= order.orderDetails[0].TOI_Order_Id %></span>
+                                                
+                                            </div>
+                                        </td>
+
+                                        <td>
+                                            <div class="py-2">
+
+                                                <span class="d-block text-muted">Payment</span>
+                                            <span><img src="https://img.icons8.com/color/48/000000/mastercard.png" width="20" /></span>
+                                                
+                                            </div>
+                                        </td>
+
+                                        <td>
+                                            <div class="py-2">
+
+                                                <span class="d-block text-muted">Shiping Address</span>
+                                            <span>414 Advert Avenue, NY,USA</span>
+                                                
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+
+                            </table>
+
+
+
+
+                            
+                        </div>
+
+
+
+
+                            <div class="product border-bottom table-responsive">
+
+                                <table class="table table-borderless">
+
+                                <tbody>
+                                    <% for (let i = 0; i < order.orderDetails.length; i++) { %>
+                                    <tr>
+                                        <td width="20%">
+                                            <a href="/shop/product-detail/<%= order.orderDetails[i].TOI_Product_Id %>" target="_blank" class="title text-dark" data-abc="true">
+                                                <img src="<%= order.orderDetails[i].TP_Image_URL %>"  width="90">
+                                            </a>
+
+                                    </td>
+                                
+                                    <td width="60%">
+                                        <a href="/shop/product-detail/<%= order.orderDetails[i].TOI_Product_Id %>" target="_blank" class="title text-dark" data-abc="true">
+                                            <span class="font-weight-bold"> <%= order.orderDetails[i].TP_Product_Title %></span>
+                                        </a>
+                                        <div class="product-qty">
+                                            <span class="d-block">Quantity:  <%= order.orderDetails[i].TOI_Quantity %></span>
+                                            
+                                        </div>
+                                    </td>
+                                    <td width="20%">
+                                        <div class="text-right">
+                                            <span class="font-weight-bold">₹ <%= order.orderDetails[i].TP_Product_Price * order.orderDetails[i].TOI_Quantity  %></span>
+                                        </div>
+                                    </td>
+                                    </tr>
+                                    <% } %>
+
+                                </tbody> 
+                                    
+                            </table>
+                                
+
+
+                            </div>
+
+
+
+                            <div class="row d-flex justify-content-end">
+
+                                <div class="col-md-5">
+
+                                    <table class="table table-borderless">
+
+                                        <tbody class="totals">
+
+                                            <tr>
+                                                <td>
+                                                    <div class="text-left">
+
+                                                        <span class="text-muted">Subtotal</span>
+                                                        
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="text-right">
+                                                        <span>₹ <%= order.totalPrice  %></span>
+                                                    </div>
+                                                </td>
+                                            </tr>
+
+
+                                             <tr>
+                                                <td>
+                                                    <div class="text-left">
+
+                                                        <span class="text-muted">Shipping Fee</span>
+                                                        
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="text-right">
+                                                        <span>₹ <%= order.shippingPrice  %></span>
+                                                    </div>
+                                                </td>
+                                            </tr>
+
+
+                                             <tr>
+                                                <td>
+                                                    <div class="text-left">
+
+                                                        <span class="text-muted">Tax Fee</span>
+                                                        
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="text-right">
+                                                        <span>18 %</span>
+                                                    </div>
+                                                </td>
+                                            </tr>
+
+
+                                             <tr>
+                                                <td>
+                                                    <div class="text-left">
+
+                                                        <span class="text-muted">Discount</span>
+                                                        
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="text-right">
+                                                        <span class="text-success">- 0</span>
+                                                    </div>
+                                                </td>
+                                            </tr>
+
+
+                                             <tr class="border-top border-bottom">
+                                                <td>
+                                                    <div class="text-left">
+
+                                                        <span class="font-weight-bold">Total</span>
+                                                        
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="text-right">
+                                                        <span class="font-weight-bold">₹ <%= order.grandTotal  %></span>
+                                                    </div>
+                                                </td>
+                                                
+                                            </tr>
+                                            
+                                        </tbody>
+                                        
+                                    </table>
+                                    
+                                </div>
+                                
+
+
+                            </div>
+
+
+                            <p>We will be sending shipping confirmation email when the item shipped successfully!</p>
+                            <p class="font-weight-bold mb-0">Thanks for shopping with us!</p>
+                            <span>E-Commerce Team</span>
+                            <div class="row">
+                                <div class="col-md-12 text-center">
+                                    <a class="btn btn-primary" href="/shop/products"><i class="fa-solid fa-arrow-left-long"></i> Back to Store</a>
+                                </div>
+                            </div>
+                            
+
+
+
+                        
+
+                    </div>
+
+
+                    <div class="d-flex justify-content-between footer p-3">
+
+                        <span>Need Help? visit our <a href="#"> help center</a></span>
+                         <span id="currentDate"></span>
+                        
+                    </div>
+
+
+
+        
+    </div>
+            
+        </div>
+        
+    </div>
+    
+</div>
+
+<script>
+    var year, month, date;
+    const d = new Date();
+    year = d.getFullYear();
+    month  = "0" + Number(d.getMonth() + 1);
+    date = d.getDate();
+    document.getElementById('currentDate').innerHTML = date + "-" + month + "-" + year;
+</script>
+<%- include('../layouts/footer.ejs') %>

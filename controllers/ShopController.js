@@ -6,12 +6,12 @@ exports.getShopIndexPage = (req, res, next) => {
 }
 
 exports.getAllProducts = (req, res, next) => {
-   Product.fetchAll()
-        .then(([rows]) => {
-            rows.forEach(element => {
-                element.TP_Product_Description = element.TP_Product_Description.substring(0,100) + "......";
-            });
-            res.render('product-list.ejs', { pageTitle:"Product List" ,pdts: rows });
+    Product.fetchAll()
+    .then(products => { 
+        products.forEach(element => {
+            element.TP_Product_Description = element.TP_Product_Description.substring(0,100) + "......";
+        });
+            res.render('product-list.ejs', { pageTitle:"Product List" ,pdts: products });
         })
         .catch(err => {
             console.log("Inside ShopController.js");
