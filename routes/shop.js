@@ -11,8 +11,11 @@ const productController = require('../controllers/ProductController');
 const cartController = require('../controllers/CartController');
 const checkoutController = require('../controllers/CheckoutController');
 const orderController = require('../controllers/OrderController');
+const userController = require('../controllers/UserController');
 
 router.get('/', shopController.getShopIndexPage);
+
+router.post('/register-user', userController.registerUser);
 
 router.get('/products', shopController.getAllProducts);
 

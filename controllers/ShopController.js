@@ -1,9 +1,14 @@
 const Product = require('../models/ProductModel');
 
+
+
 //const products = new Products();
 exports.getShopIndexPage = (req, res, next) => {
     res.render('shop/index.ejs', {pageTitle: "Welcome"});
 }
+
+
+
 
 exports.getAllProducts = (req, res, next) => {
     Product.fetchAll()
