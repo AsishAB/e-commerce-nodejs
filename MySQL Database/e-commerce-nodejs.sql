@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 8.0.28, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.25, for Win64 (x86_64)
 --
 -- Host: localhost    Database: e-commerce-nodejs
 -- ------------------------------------------------------
--- Server version	8.0.28
+-- Server version	8.0.25
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -180,8 +180,9 @@ CREATE TABLE `tbl_users` (
   `TUM_Email` varchar(255) DEFAULT NULL,
   `TUM_MobileNo` varchar(45) DEFAULT NULL,
   `TUM_Password` text,
-  `TUM_CreatedBy` timestamp NULL DEFAULT NULL,
-  `TUM_UpdatedBy` timestamp NULL DEFAULT NULL,
+  `TUM_CreatedDate` timestamp NULL DEFAULT NULL,
+  `TUM_UpdatedBy` varchar(255) DEFAULT NULL,
+  `TUM_UpdatedDate` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`TUM_Id`),
   UNIQUE KEY `TUM_Id_UNIQUE` (`TUM_Id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -193,7 +194,7 @@ CREATE TABLE `tbl_users` (
 
 LOCK TABLES `tbl_users` WRITE;
 /*!40000 ALTER TABLE `tbl_users` DISABLE KEYS */;
-INSERT INTO `tbl_users` VALUES (1,'Asish','B','superadmin','asish@gmail.com',NULL,NULL,NULL,NULL);
+INSERT INTO `tbl_users` VALUES (1,'Asish','B','superadmin','asish@gmail.com',NULL,NULL,NULL,NULL,NULL);
 /*!40000 ALTER TABLE `tbl_users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -356,4 +357,4 @@ SET character_set_client = @saved_cs_client;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-05-16 18:00:25
+-- Dump completed on 2022-05-22 21:52:38
