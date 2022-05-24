@@ -1,33 +1,61 @@
-const { deleteById } = require("../models/ProductModel");
 const getDB = require("../helpers/database-mongodb").getDB;
 const mongodb = require('mongodb');
 const Cart = require('../models/CartModel');
 
 
 exports.getCart = (req, res, next) => {
-    const userId = 1;
+    const userId = new mongodb.ObjectId("6289f95b782fc61f1491f279");
     var totalPrice = 0;
-    // const price = element.TCI_Quantity * element.TP_Product_Price;
-    
+    const db = getDB();
 
-    res.render('cart.ejs', { pageTitle: "Cart", cartItems: rows, totalPrice: totalPrice});
-       
+    db.collection('doc_cart').find( {TCI_Created_By:userId } ).toArray()
+        .then(cartItems => {
+            for (let i = 0; i < cartItems.length; i++) {
+                db.collection('doc_products').find({_id: new mongodb.ObjectId(cartItems[i].TCI_ProductId) }).next()
+                .then(product  => {
+                   totalPrice+=product.TP_Product_Price * cartItems[i].TCI_Quantity;
+                });
+            }
+            const cartData = {
+                cartItems: cartItems, 
+                totalPrice: totalPrice
+            }
+            return cartData
+        }) 
+        .then(cartData => {
+            // console.log("Inside CartController, cartItems, productItems");
+            // console.log(cartData);
+            res.render('cart.ejs', { pageTitle: "Cart", cartItems: cartData.cartItems, totalPrice: cartData.totalPrice});
+        })
+        .catch(err => {
+            console.log("Inside CartController, cartItems, productItems");
+            console.log(err);
+        });
     
 };
+    
+       
+    
 
 exports.addToCart = (req, res, next) => {
-    const prodId = req.body.productId;
-    const userId = 1;
+    const prodId = new mongodb.ObjectId(req.body.productId);
+    const userId = new mongodb.ObjectId("6289f95b782fc61f1491f279");
     var quantity = 1;
     const db = getDB();
-    db.collection('doc_cart').find({ TCI_ProductId : new mongodb.ObjectId(prodId), TCI_Created_By:new mongodb.ObjectId(userId)  }).next()
-        .then(cartItems => {
-            if(cartItem) {
-                console.log(cartItem._id)
-                quantity+=1;
-                const updateCartItems = new Cart(null, quantity, prodId, TCI_Created_By);
+    db.collection('doc_cart').find({ TCI_ProductId : prodId, TCI_Created_By:userId  }).next()
+        .then(cartItem => {
+            return cartItem;
+        })
+            
+        .then(cartItem => {
 
-                updateCartItems.addToCart()
+            if(cartItem) {
+                //console.log("Inside CartController, addToCart , updateCart");
+                console.log(cartItem.TCI_Quantity);
+                quantity+=cartItem.TCI_Quantity;
+                const updateCartItems = new Cart(cartItem._id, quantity, prodId, userId);
+
+                updateCartItems.save()
                     .then(() => {
                         res.redirect('/shop/cart');
                     })
@@ -36,14 +64,15 @@ exports.addToCart = (req, res, next) => {
                         console.log(err);  
                     });
             } else {
-                const insertCartItems = new Cart(null, quantity, prodId, TCI_Created_By);
+                //console.log("Inside CartController, addToCart , insertCart");
+                const insertCartItems = new Cart(null, quantity, prodId, userId);
                 
-                insertCartItems.addToCart()
+                insertCartItems.save()
                     .then(() => {
                         res.redirect('/shop/cart');
                     })
                     .catch(err => {
-                        console.log("Inside CartController, addToCart , updateCart");
+                        console.log("Inside CartController, addToCart , insertCart");
                         console.log(err);  
                     });
             }
@@ -61,14 +90,16 @@ exports.addToCart = (req, res, next) => {
 
 exports.removeItemFromCart = (req, res, next) => {
     const cartId = req.body.cart_id;
-    db.query("DELETE FROM tbl_cart_items WHERE TCI_Id = ?", [cartId])   
-        .then(result => {
-            // console.log("Inside CartController, removeItemFromCart");
-            // console.log(result);
-            res.redirect('/shop/cart');
-        })
-        .catch(err => {
-            console.log("Inside CartController, removeItemFromCart");
-            console.log(err);
-        });
+    Cart.deleteById(cartId)
+    .then(() => {
+        res.redirect('/shop/cart');
+    })
+    
+    .catch(err => {
+        console.log("Inside CartController, removeItemsFromCart");
+        console.log(err)
+    });
 };
+    
+
+   
