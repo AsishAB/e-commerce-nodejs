@@ -1,75 +1,61 @@
 const { deleteById } = require("../models/ProductModel");
-const db = require("../helpers/database-mysql");
+const getDB = require("../helpers/database-mongodb").getDB;
+const mongodb = require('mongodb');
+const Cart = require('../models/CartModel');
 
 
 exports.getCart = (req, res, next) => {
     const userId = 1;
     var totalPrice = 0;
-    db.query("SELECT * FROM vw_cart_items WHERE TCI_CartItem_AddedBy = ? ", [userId])
-        .then(([rows]) => {
-            rows.forEach(element => {
-                const price = element.TCI_Quantity * element.TP_Product_Price;
-                totalPrice += price;
-            });
-            res.render('cart.ejs', { pageTitle: "Cart", cartItems: rows, totalPrice: totalPrice});
-        });
+    // const price = element.TCI_Quantity * element.TP_Product_Price;
+    
+
+    res.render('cart.ejs', { pageTitle: "Cart", cartItems: rows, totalPrice: totalPrice});
+       
     
 };
 
 exports.addToCart = (req, res, next) => {
     const prodId = req.body.productId;
     const userId = 1;
-    //console.log("Inside CartController.js-- Add to Cart Post request --> Product Id = " + prodId);
-    db.query("SELECT * FROM vw_cart_items WHERE TCI_ProductId = ? AND TCI_CartItem_AddedBy = ? ", [prodId, userId])
-        .then(([cartRows]) => {
-            //console.log(cartRows);
-            if(cartRows.length == 0) {
-                db.query("INSERT INTO tbl_cart (TC_CreatedBy) VALUES (?)", [userId])
-                    .then(([rows]) => {
-                        //console.log("Inside CartController.js-- Add to Cart Post request --> Cart Added Successfully ");
-                       // console.log(rows.insertId);
-                        db.query("INSERT INTO tbl_cart_items (TCI_Quantity,TCI_CartId , TCI_ProductId,TCI_CartItem_AddedBy) VALUES (?, ?, ?, ?)", [1,rows.insertId, prodId,userId])
-                        .then(() => {
-                           // console.log("Inside CartController.js-- Add to Cart Post request --> Cart Added Successfully ");
-                        })
-                        .catch(err => {
-                            console.log("Err Inside CartController.js-- Add to Cart Post request ");
-                            console.log(err);
-                        });
-                        
-                       
+    var quantity = 1;
+    const db = getDB();
+    db.collection('doc_cart').find({ TCI_ProductId : new mongodb.ObjectId(prodId), TCI_Created_By:new mongodb.ObjectId(userId)  }).next()
+        .then(cartItems => {
+            if(cartItem) {
+                console.log(cartItem._id)
+                quantity+=1;
+                const updateCartItems = new Cart(null, quantity, prodId, TCI_Created_By);
+
+                updateCartItems.addToCart()
+                    .then(() => {
+                        res.redirect('/shop/cart');
                     })
                     .catch(err => {
-                        //console.log(" Err Inside CartController.js-- Add to Cart Post request ");
-                        //console.log(err);
+                        console.log("Inside CartController, addToCart , updateCart");
+                        console.log(err);  
                     });
-
-                  
-
-                
             } else {
-                //console.log("Here");
-                const updatedQuantity = Number(cartRows[0].TCI_Quantity) + 1; //Add 1, if the product already exists
-                //console.log("updatedQuantity " + updatedQuantity);
-                db.query("UPDATE tbl_cart_items SET TCI_Quantity = ? WHERE TCI_CartId = ? AND TCI_ProductId = ?", [updatedQuantity, cartRows[0].TC_Cart_Id, prodId])
-                    .then(() => {
-                            console.log("Inside CartController.js-- Add to Cart Post request --> Cart Updated Successfully ");
-                    })
-                    .catch(err =>{
-                        console.log("Inside CartController.js");
-                        console.log(err);
-                    });
-              
+                const insertCartItems = new Cart(null, quantity, prodId, TCI_Created_By);
                 
+                insertCartItems.addToCart()
+                    .then(() => {
+                        res.redirect('/shop/cart');
+                    })
+                    .catch(err => {
+                        console.log("Inside CartController, addToCart , updateCart");
+                        console.log(err);  
+                    });
             }
         })
         .catch(err => {
-            console.log("Inside CartController.js");
-            console.log(err);
-        });
-
-
-    res.redirect('/shop/cart');
+            console.log("Inside CartController, addToCart");
+            console.log(err);      
+        })
+    //const cart = new Cart(null,quantity,prodId, userId);
+    //console.log("Inside CartController.js-- Add to Cart Post request --> Product Id = " + prodId);
+    
+    
 };
 
 

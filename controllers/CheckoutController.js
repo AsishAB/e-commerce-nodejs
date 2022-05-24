@@ -1,4 +1,4 @@
-const db = require("../helpers/database-mysql");
+const getDB = require("../helpers/database-mongodb").getDB;
 
 exports.getCheckout = (req, res, next) => {
     const userId = 1;
