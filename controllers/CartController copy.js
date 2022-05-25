@@ -22,13 +22,12 @@ exports.getCart = (req, res, next) => {
                         return {
                             ...p ,
                             
-                            cartId:cartItems.find(ct =>  {
-                            return ct.TCI_ProductId.toString() === p._id.toString();
+                            cartId:cartItems.map(ct =>  {
+                            return ct.TCI_ProductId.toString() === p._id;
                         })._id,
 
-                        quantity: cartItems.find(ct =>  {
-                            //console.log(ct.TCI_ProductId.toString() + "------" +  p._id.toString())
-                                return ct.TCI_ProductId.toString() === p._id.toString();
+                        quantity: cartItems.map(ct =>  {
+                                return ct.TCI_ProductId.toString() === p._id;
                             }).TCI_Quantity
                         }
                     })
@@ -38,12 +37,9 @@ exports.getCart = (req, res, next) => {
                    // return products;
                 })
                 .then(cartData => {
-                    // console.log("Inside CartController, cartItems, productItems");
-                    // console.log(cartData);
-
-                    cartData.forEach(element => {
-                        totalPrice+=element.quantity * element.TP_Product_Price;   
-                    });
+                    console.log("Inside CartController, cartItems, productItems");
+                    console.log(cartData);
+                    //res.render('cart.ejs', { pageTitle: "Cart", cartItems: cartData.cartItems, totalPrice: cartData.totalPrice});
                     res.render('cart.ejs', { pageTitle: "Cart", cartItems: cartData, totalPrice: totalPrice});
                 })
                 
