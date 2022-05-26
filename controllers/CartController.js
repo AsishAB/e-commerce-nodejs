@@ -7,6 +7,7 @@ exports.getCart = (req, res, next) => {
     const userId = new mongodb.ObjectId("6289f95b782fc61f1491f279");
     var totalPrice = 0;
     const products = [];
+    var shippingPrice = 200;
     const db = getDB();
     var cartObject = {};
 
@@ -22,11 +23,11 @@ exports.getCart = (req, res, next) => {
                         return {
                             ...p ,
                             
-                            cartId:cartItems.find(ct =>  {
+                            cartId: cartItems.find(ct =>  {
                             return ct.TCI_ProductId.toString() === p._id.toString();
                         })._id,
 
-                        quantity: cartItems.find(ct =>  {
+                            quantity: cartItems.find(ct =>  {
                             //console.log(ct.TCI_ProductId.toString() + "------" +  p._id.toString())
                                 return ct.TCI_ProductId.toString() === p._id.toString();
                             }).TCI_Quantity
