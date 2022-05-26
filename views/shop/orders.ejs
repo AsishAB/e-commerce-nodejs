@@ -1,6 +1,7 @@
 <%- include('../layouts/main-layout.ejs')  %>
 
+<%  for (let i = 0; i< OrderList.orders.length; i++ ) { %>
+<li><%= OrderList.orders[i].TO_Order_Id %></li>
 
-
-
+<% } %>
 <%- include('../layouts/footer.ejs') %>

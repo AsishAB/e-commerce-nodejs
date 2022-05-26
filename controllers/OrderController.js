@@ -2,7 +2,33 @@ const getDB = require("../helpers/database-mongodb").getDB;
 const mongodb = require('mongodb');
 
 exports.getOrders = (req, res, next) => {
-    res.render('orders.ejs', { path:'/orders',pageTitle:"Orders" });
+    const db = getDB();
+    const userId = new mongodb.ObjectId("6289f95b782fc61f1491f279");
+    db.collection('doc_orders').find( {TO_User_Id: userId} ).toArray()
+        .then(orders => {
+            const orderIds = orders.map(ord => {
+                return ord.TO_Order_Id
+            });
+            
+            db.collection('doc_order_items').find( {TOI_Order_Id: { $in: orderIds } }).toArray()
+                .then(orderItems =>  {
+                    const Order = {
+                        orders : orders,
+                        orderItems : orderItems
+                    }
+                    //console.log(Order);
+                    res.render('orders.ejs', { path:'/orders',pageTitle:"Orders" , OrderList : Order});
+                })
+                .catch(err => {
+                    console.log("Inside OrderController.js -> getOrders");
+                    console.log(err);
+                });
+        })
+        .catch(err => {
+            console.log("Inside OrderController.js -> getOrders");
+            console.log(err);
+        });
+    // res.render('orders.ejs', { path:'/orders',pageTitle:"Orders" });
 }
 
 exports.placeOrder = (req, res, next) => {
@@ -64,7 +90,7 @@ exports.placeOrder = (req, res, next) => {
                 .then(cartData => {
                    
                     cartData.forEach(element => {
-                        var order = {TOI_Order_Id:orderId, TOI_Product_Id: element._id, TOI_Quantity:element.quantity , TOI_Created_On: new Date()  }
+                        var order = {TOI_Order_Id:orderId, TOI_Product_Id: element._id,TOI_Product_Price: element.TP_Product_Price, TOI_Quantity:element.quantity , TOI_Created_On: new Date()  }
                         OrderItemObject.push(order);
 
                         totalPrice+=element.quantity * element.TP_Product_Price;   
@@ -125,6 +151,11 @@ exports.getOrderConfirmation = (req, res, next) => {
                                     return  {
                                         ...p , 
 
+                                        TP_Product_Price: orderItemDetail.find(oi => {
+                                            return oi.TOI_Product_Id.toString() === p._id.toString()
+                                            
+                                        }).TOI_Product_Price,
+                                        
                                         TOI_Quantity: orderItemDetail.find(oi => {
                                             return oi.TOI_Product_Id.toString() === p._id.toString()
                                             
