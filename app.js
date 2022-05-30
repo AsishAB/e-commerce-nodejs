@@ -13,7 +13,7 @@ const htmlError = require('./controllers/HtmlErrorController');
 const db = require('./helpers/database-mysql');
 //const sequelize = require('./helpers/database-using-sequelize');
 
-const MongoConnect = require("./helpers/database-mongodb").MongoConnect;
+// const MongoConnect = require("./helpers/database-mongodb").MongoConnect;
 const mongoURL = require('./helpers/secret-data/mongodb-url');
 const mongoose = require('mongoose');
 
@@ -82,6 +82,7 @@ const port = process.env.PORT || 3000;
 
 mongoose.connect(mongoURL)
     .then(result => {
+        console.log(`E-Commerce app listening on port ${port} - http://localhost:${port}`)
         app.listen(port);
     })
     .catch(err => {

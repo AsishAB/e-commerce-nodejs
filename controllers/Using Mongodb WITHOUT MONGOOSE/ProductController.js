@@ -37,15 +37,15 @@ exports.addProduct = (req, res, next) => {
     //console.log("Inside ProductController " + title + description + price + imgURL);
     let product;
     if (productId == '') {
-        product = new Product({TP_ProductId: null ,TP_Product_Title:title,TP_Product_Description:description,TP_Image_URL:imgURL,TP_Product_Price:price,TP_Created_By:null});
+        product = new Product(null,title,description,imgURL,price);
     } else {
-        product = new Product({TP_ProductId: productId ,TP_Product_Title:title,TP_Product_Description:description,TP_Image_URL:imgURL,TP_Product_Price:price,TP_Created_By:null});
+        product = new Product(productId ,title,description,imgURL,price);
     }
     
     product.save()
-        .then(response => {
-            console.log("Inside Product Controller.js");
-            console.log(response);
+        .then((response) => {
+            // console.log("Inside Product Controller.js");
+            // console.log(response);
             //res.redirect('/admin/product-list');
         })
         .catch(err => {
