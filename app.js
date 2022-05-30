@@ -14,6 +14,8 @@ const db = require('./helpers/database-mysql');
 //const sequelize = require('./helpers/database-using-sequelize');
 
 const MongoConnect = require("./helpers/database-mongodb").MongoConnect;
+const mongoURL = require('./helpers/secret-data/mongodb-url');
+const mongoose = require('mongoose');
 
 
 
@@ -76,14 +78,30 @@ app.use(htmlError.get404Page); //To display 404 page
 
 const port = process.env.PORT || 3000;
 
-MongoConnect((client) => {
-    // console.log("Inside app.js, MongoConnect");
-    // console.log(client);
-    app.listen(port, () => {
-        console.log(`E-Commerce app listening on port ${port} - http://localhost:${port}`)
-    });
-});
 
+
+mongoose.connect(mongoURL)
+    .then(result => {
+        app.listen(port);
+    })
+    .catch(err => {
+         console.log("Inside app.js, mongoose");
+         console.log(err);
+    });
+
+
+/* ===================== To connect to Mongo without Mongoose and listen to server port ==================================== */
+
+// MongoConnect((client) => {
+//     // console.log("Inside app.js, MongoConnect");
+//     // console.log(client);
+//     app.listen(port, () => {
+//         console.log(`E-Commerce app listening on port ${port} - http://localhost:${port}`)
+//     });
+// });
+
+
+/* ===================== To listen to server port only ==================================== */
 // app.listen(port, () => {
 //             console.log(`E-Commerce app listening on port ${port} - http://localhost:${port}`)
 // });
