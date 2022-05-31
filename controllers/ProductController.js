@@ -1,5 +1,5 @@
 const Product = require('../models/ProductModel');
-//const mongodb = require('mongodb');
+const mongodb = require('mongodb');
 
 exports.getAddProduct = (req, res, next) => {
     
@@ -32,26 +32,49 @@ exports.addProduct = (req, res, next) => {
     const title = req.body.title;
     const description = req.body.desc;
     const price = req.body.price;
+    const userId = new mongodb.ObjectId("6289f95b782fc61f1491f279");
     //const imgURL = req.body.img_url;
-    const imgURL = '';
+    const imgURL = req.body.img_url ? req.body.img_url : 'https://live.staticflickr.com/5217/5471047557_4dc13f5376_n.jpg';
     //console.log("Inside ProductController " + title + description + price + imgURL);
     let product;
     if (productId == '') {
-        product = new Product({TP_ProductId: null ,TP_Product_Title:title,TP_Product_Description:description,TP_Image_URL:imgURL,TP_Product_Price:price,TP_Created_By:null});
-    } else {
-        product = new Product({TP_ProductId: productId ,TP_Product_Title:title,TP_Product_Description:description,TP_Image_URL:imgURL,TP_Product_Price:price,TP_Created_By:null});
-    }
-    
-    product.save()
+        product = new Product({TP_ProductId: null ,TP_Product_Title:title,TP_Product_Description:description,TP_Image_URL:imgURL,TP_Product_Price:price,TP_Created_By:userId});
+        product.save()
         .then(response => {
-            console.log("Inside Product Controller.js");
-            console.log(response);
+            //console.log("Inside Product Controller.js  -> addProduct - >adding Product");
+            //console.log(response);
             //res.redirect('/admin/product-list');
         })
         .catch(err => {
-            console.log("Inside Product Controller.js");
+            console.log("Inside Product Controller.js -> addProduct - >adding Product");
             console.log(err);
         });
+    } else {
+        // product = new Product({TP_ProductId: productId ,TP_Product_Title:title,TP_Product_Description:description,TP_Image_URL:imgURL,TP_Product_Price:price,TP_Created_By:null});
+        Product.findById(productId)
+            .then(productFromId => {
+                // console.log("Inside Product Controller.js -> addProduct - >updating Product");
+                // console.log(productFromId);
+               
+                productFromId.TP_Product_Title=title;
+                productFromId.TP_Product_Description=description;
+                productFromId.TP_Image_URL=imgURL;
+                productFromId.TP_Product_Price=price;
+                productFromId.TP_Created_By=userId;
+                productFromId.save()
+                .then(response => {
+                    console.log("Inside Product Controller.js -> addProduct - >updating Product");
+                    console.log(response);
+                    //res.redirect('/admin/product-list');
+                })
+                .catch(err => {
+                    console.log("Inside Product Controller.js");
+                    console.log(err);
+                });
+            });
+    }
+    
+    
     
     //console.log(product);
    // res.redirect('/admin/product-list');
@@ -59,7 +82,7 @@ exports.addProduct = (req, res, next) => {
 
 exports.deleteProduct = (req, res, next) => {
     const prodId  = req.body.productId;
-    Product.deleteById(prodId)
+    Product.findByIdAndRemove(prodId)
     .then(() => {
         // console.log("Inside Product Controller.js");
         // console.log("Product Deleted");
@@ -75,7 +98,7 @@ exports.deleteProduct = (req, res, next) => {
 
 
 exports.getProductListAdmin = (req, res, next) => {
-    Product.fetchAll()
+    Product.find()
     .then(products => { 
         products.forEach(element => {
             element.TP_Product_Description = element.TP_Product_Description.substring(0,100) + "......";

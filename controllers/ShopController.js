@@ -11,7 +11,7 @@ exports.getShopIndexPage = (req, res, next) => {
 
 
 exports.getAllProducts = (req, res, next) => {
-    Product.fetchAll()
+    Product.find()
     .then(products => { 
         products.forEach(element => {
             element.TP_Product_Description = element.TP_Product_Description.substring(0,100) + "......";
