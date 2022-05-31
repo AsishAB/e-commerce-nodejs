@@ -9,7 +9,7 @@ exports.registerUser = (req, res, next) => {
     const password = req.body.password;
     const confirm_password = req.body.confirm_password;
 
-    const user = new User(firstName, lastName, emailId, phoneNo, confirm_password);
+    const user = new User({TUM_FirstName:firstName, TUM_LastName:lastName, TUM_Email:emailId, TUM_MobileNo:phoneNo, TUM_Password:confirm_password,TUM_Role:'customer'});
 
     user.save()
         .then(() => {
