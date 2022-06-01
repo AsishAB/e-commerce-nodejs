@@ -23,8 +23,9 @@ const productSchema  = new Schema({
         required:true
     },
     TP_Created_By: {
-        type:Object,
-        required:false
+        type: Schema.Types.ObjectId,
+        ref:'User', //The User Model. Has to be same as the model. Only available in Mongoose
+        required:true
     },
 
 });

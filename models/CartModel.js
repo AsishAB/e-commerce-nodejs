@@ -1,35 +1,25 @@
-const getDB = require("../helpers/database-mongodb").getDB;
-const mongodb = require('mongodb');
-const Cart = require('../models/CartModel');
+const mongoose = require('mongoose');
 
-module.exports = class Cart {
+const Schema = mongoose.Schema;
 
-    constructor(cartId, quantity, productId, createdBy) {
-        this.TCI_CartId = (cartId != null) ? new mongodb.ObjectId(cartId) : null;
-        this.TCI_Quantity = quantity;
-        this.TCI_ProductId = productId;
-        this.TCI_Created_By = createdBy;
-    }
+const cartSchema = new Schema({
+    TCI_CartId : {
+        type:Object
+    },
+    TCI_Quantity : {
+        type:Number,
+        required:true
+    },
+    TCI_ProductId : {
+        type: Schema.Types.ObjectId,
+        ref:'Product', //The User Model. Has to be same as the model. Only available in Mongoose
+        required:true
+    },
+    TCI_Created_By : {
+        type: Schema.Types.ObjectId,
+        ref:'User', //The User Model. Has to be same as the model. Only available in Mongoose
+        required:true
+    }   
 
-    save() {
-        const db = getDB();
-        if (this.TCI_CartId) {
-            return db.collection('doc_cart').updateOne( { _id:this.TCI_CartId}, { $set:this  } );
-            
-        } else {
-             
-            return db.collection('doc_cart').insertOne( this );
-        }
-        
-        
-    }
+});
 
-    static deleteById(cartId) {
-        
-        const db = getDB();
-        return db.collection('doc_cart').deleteOne( { _id: new mongodb.ObjectId(cartId)} );
-
-    }
-
-    
-}
