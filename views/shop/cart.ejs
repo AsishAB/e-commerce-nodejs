@@ -26,18 +26,18 @@
                                 <td>
                                     <figure class="itemside align-items-center">
                                         <div class="aside">
-                                            <img src="<%= cartItems[i].TP_Image_URL %>" class="img-sm">
+                                            <img src="<%= cartItems[i].TCI_ProductId.TP_Image_URL %>" class="img-sm">
                                         </div>
                                         <figcaption class="info"> 
-                                            <a href="/shop/product-detail/<%= cartItems[i].TP_ProductId %>" target="_blank" class="title text-dark" data-abc="true">
-                                                <%= cartItems[i].TP_Product_Title %>
+                                            <a href="/shop/product-detail/<%= cartItems[i].TCI_ProductId._id %>" target="_blank" class="title text-dark" data-abc="true">
+                                                <%= cartItems[i].TCI_ProductId.TP_Product_Title %>
                                             </a>
                                             
                                         </figcaption>
                                     </figure>
                                 </td>
                                 <td> 
-                                    <input class="form-control" value="<%= cartItems[i].quantity %>">
+                                    <input class="form-control" value="<%= cartItems[i].TCI_Quantity %>">
                                     <!-- <select class="form-control">
                                         <option value="1">1</option>
                                         <option value="1">2</option>
@@ -47,14 +47,14 @@
                                 </td>
                                 <td>
                                     <div class="price-wrap">
-                                         <var class="price"> ₹ <%= cartItems[i].TP_Product_Price * cartItems[i].quantity  %>  </var> 
-                                         <small class="text-muted"> ₹ <%= cartItems[i].TP_Product_Price %>  per unit </small>
+                                         <var class="price"> ₹ <%= cartItems[i].TCI_ProductId.TP_Product_Price * cartItems[i].TCI_Quantity  %>  </var> 
+                                         <small class="text-muted"> ₹ <%= cartItems[i].TCI_ProductId.TP_Product_Price %>  per unit </small>
                                     </div>
                                 </td>
                                 <td class="text-right d-none d-md-block"> 
                                     <a data-original-title="Save to Wishlist" title="" href="javascript:" class="btn btn-light" data-toggle="tooltip" data-abc="true"> <i class="fa fa-heart"></i></a>
                                     <form method="POST" action="/shop/removeItemFromCart">
-                                        <input type="hidden" name="cart_id" id="cart_id" value="<%= cartItems[i].cartId %>">
+                                        <input type="hidden" name="cart_id" id="cart_id" value="<%= cartItems[i]._id %>">
                                         <button type="submit"  class="btn btn-light" data-abc="true"> Remove</button> 
                                     </form>
                                     

@@ -1,8 +1,11 @@
-const getDB = require("../helpers/database-mongodb").getDB;
+
 const mongodb = require('mongodb');
+const Order  = require('../models/OrderModel');
+const OrderItems  = require('../models/OrderItemsModel');
+const Cart = require('../models/CartModel');
 
 exports.getOrders = (req, res, next) => {
-    const db = getDB();
+    
     const userId = new mongodb.ObjectId("6289f95b782fc61f1491f279");
     db.collection('doc_orders').find( {TO_User_Id: userId} ).toArray()
         .then(orders => {
@@ -32,7 +35,7 @@ exports.getOrders = (req, res, next) => {
 }
 
 exports.placeOrder = (req, res, next) => {
-    const db = getDB();
+    
     const userId = new mongodb.ObjectId("6289f95b782fc61f1491f279");
     
     var totalPrice = 0;
@@ -43,7 +46,7 @@ exports.placeOrder = (req, res, next) => {
     var dateTime = new Date().getFullYear() + ( new Date().getMonth() + 1 ) +  new Date().getDate() +  new Date().getHours() +  new Date().getMinutes() +  new Date().getSeconds();
     var orderId = "ECNJS-";
     orderId+=dateTime + "-00";
-    db.collection('doc_orders').find().toArray()
+    Order.find()
         .then(orders => {
             totalOrders = orders.length + 1;
         })
@@ -54,47 +57,31 @@ exports.placeOrder = (req, res, next) => {
 
     orderId+=totalOrders;
 
-    db.collection('doc_cart').find( {TCI_Created_By: new mongodb.ObjectId(userId) } ).toArray()
-        .then(cartItems => {
-            if (cartItems.length == 0) {
-                console.log(cartItems);
+    Cart.find( {TCI_Created_By: new mongodb.ObjectId(userId) } )
+        .populate('TCI_ProductId')
+        .then(cartData => {
+            if (cartData.length == 0) {
+                console.log(cartData);
                 console.log("Inside OrderController.js -> placeOrder");
-                console.log('No Cart Found');
+                console.log('Cart is Empty');
                 res.redirect('/shop/products');
-            }
-            const productIds = cartItems.map(id => {
-                return id.TCI_ProductId
-            });
-            //console.log(productIds)
-            db.collection('doc_products').find( {_id: {$in: productIds}} ).toArray()
-            .then(products => {
-                    return products.map(p => {
-                        return {
-                            ...p ,
-                            
-                            cartId: cartItems.find(ct =>  {
-                            return ct.TCI_ProductId.toString() === p._id.toString();
-                        })._id,
-
-                            quantity: cartItems.find(ct =>  {
-                            //console.log(ct.TCI_ProductId.toString() + "------" +  p._id.toString())
-                                return ct.TCI_ProductId.toString() === p._id.toString();
-                            }).TCI_Quantity
+            } else {    
+                
+                //console.log(cartData);
+                //return;
+                        cartData.forEach(element => {
+                        var order = {
+                            TOI_Order_Id:orderId, 
+                            TOI_Product_Id: element.TCI_ProductId._id,
+                            TOI_Product_Price: element.TCI_ProductId.TP_Product_Price, 
+                            TOI_Quantity:element.TCI_Quantity , 
+                            TOI_Created_On: new Date()  
                         }
-                    })
-                    //cartObject.products = products;
-
-
-                   // return products;
-                })
-                .then(cartData => {
-                   
-                    cartData.forEach(element => {
-                        var order = {TOI_Order_Id:orderId, TOI_Product_Id: element._id,TOI_Product_Price: element.TP_Product_Price, TOI_Quantity:element.quantity , TOI_Created_On: new Date()  }
                         OrderItemObject.push(order);
 
-                        totalPrice+=element.quantity * element.TP_Product_Price;   
+                        totalPrice+=element.TCI_Quantity * element.TCI_ProductId.TP_Product_Price;   
                     });
+                    
                     var OrderObject = {
                         TO_Order_Id: orderId,
                         TO_User_Id: userId,
@@ -103,16 +90,27 @@ exports.placeOrder = (req, res, next) => {
                         TO_Total_Price: Number(totalPrice + shippingPrice),
                         TO_Coupon_Code: couponCode,
                         TO_Created_On: new Date()
-                    }
-                    //console.log(OrderItemObject);
-                    db.collection('doc_order_items').insertMany(OrderItemObject);
-                    db.collection('doc_orders').insertOne(OrderObject);
+                    };
+                    console.log(OrderItemObject);
+                    // console.log('--------------------');
+                    // console.log(OrderItemObject);
                     
+                    const createOrder = new Order(OrderObject);
+                    const createOrderItems = new OrderItems(OrderItemObject);
+                    console.log(createOrder);
+                    console.log('--------------------');
+                    console.log(createOrderItems);
+                    // return;   
+                    createOrder.save();
+                    createOrderItems.save();
+                   
                     res.redirect('/shop/order-confirmation?orderId=' + orderId);
-                });
-                
-        });
 
+                }
+        });
+                
+       
+       
 };
 
     

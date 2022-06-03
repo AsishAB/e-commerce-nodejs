@@ -1,6 +1,7 @@
 const Product = require('../models/ProductModel');
 const mongodb = require('mongodb');
 
+
 exports.getAddProduct = (req, res, next) => {
     
     const prodId = req.params.id;
@@ -63,8 +64,8 @@ exports.addProduct = (req, res, next) => {
                 productFromId.TP_Created_By=userId;
                 productFromId.save()
                 .then(response => {
-                    console.log("Inside Product Controller.js -> addProduct - >updating Product");
-                    console.log(response);
+                    //console.log("Inside Product Controller.js -> addProduct - >updating Product");
+                    //console.log(response);
                     //res.redirect('/admin/product-list');
                 })
                 .catch(err => {

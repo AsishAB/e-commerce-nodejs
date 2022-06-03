@@ -18,10 +18,10 @@
         <ul class="list-group mb-3">
           <li class="list-group-item d-flex justify-content-between lh-condensed">
             <div>
-              <h6 class="my-0"><%= cartItems[i].TP_Product_Title %></h6>
-              <small class="text-muted">Quantity : <%= cartItems[i].quantity %></small>
+              <h6 class="my-0"><%= cartItems[i].TCI_ProductId.TP_Product_Title %></h6>
+              <small class="text-muted">Quantity : <%= cartItems[i].TCI_Quantity %></small>
             </div>
-            <span class="text-muted">₹ <%= cartItems[i].TP_Product_Price * cartItems[i].quantity %></span>
+            <span class="text-muted">₹ <%= cartItems[i].TCI_ProductId.TP_Product_Price * cartItems[i].TCI_Quantity %></span>
           </li>
           
           <% } %>
