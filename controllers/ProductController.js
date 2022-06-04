@@ -1,6 +1,6 @@
 const Product = require('../models/ProductModel');
 const mongodb = require('mongodb');
-
+const getUserId = require('../helpers/getUserId');
 
 exports.getAddProduct = (req, res, next) => {
     
@@ -33,7 +33,7 @@ exports.addProduct = (req, res, next) => {
     const title = req.body.title;
     const description = req.body.desc;
     const price = req.body.price;
-    const userId = new mongodb.ObjectId("6289f95b782fc61f1491f279");
+    const userId = new mongodb.ObjectId(getUserId);
     //const imgURL = req.body.img_url;
     const imgURL = req.body.img_url ? req.body.img_url : 'https://live.staticflickr.com/5217/5471047557_4dc13f5376_n.jpg';
     //console.log("Inside ProductController " + title + description + price + imgURL);

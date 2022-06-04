@@ -1,10 +1,11 @@
 const mongodb = require('mongodb');
 const Cart = require('../models/CartModel');
 const Product = require('../models/ProductModel');
-// console.log(Cart);
+const getUserId = require('../helpers/getUserId');
+
 
 exports.getCart = (req, res, next) => {
-    const userId = new mongodb.ObjectId("6289f95b782fc61f1491f279");
+    const userId = new mongodb.ObjectId(getUserId);
     var totalPrice = 0;
     const products = [];
     var shippingPrice = 200;
@@ -36,7 +37,7 @@ exports.getCart = (req, res, next) => {
 
 exports.addToCart = (req, res, next) => {
     const prodId = new mongodb.ObjectId(req.body.productId);
-    const userId = new mongodb.ObjectId("6289f95b782fc61f1491f279");
+    const userId = new mongodb.ObjectId(getUserId);
     var quantity = 1;
     // const db = getDB();
 

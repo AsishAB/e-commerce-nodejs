@@ -12,7 +12,7 @@ const cartSchema = new Schema({
     },
     TCI_ProductId : {
         type: Schema.Types.ObjectId,
-        ref:'Product', //The User Model. Has to be same as the model. Only available in Mongoose
+        ref:'Product', //The Product Model. Has to be same as the model. Only available in Mongoose
         required:true
     },
     TCI_Created_By : {

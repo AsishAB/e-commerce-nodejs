@@ -4,8 +4,7 @@ const Schema = mongoose.Schema;
 
 const orderItemSchema = new Schema({
     TOI_Order_Id:{
-        type: Schema.Types.ObjectId,
-        ref:'Order', //The Order Model. Has to be same as the model. Only available in Mongoose
+        type:String,
         required:true
     },
     TOI_Product_Id:{

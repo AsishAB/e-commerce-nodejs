@@ -3,10 +3,11 @@ const mongodb = require('mongodb');
 const Order  = require('../models/OrderModel');
 const OrderItems  = require('../models/OrderItemsModel');
 const Cart = require('../models/CartModel');
+const getUserId = require('../helpers/getUserId');
 
 exports.getOrders = (req, res, next) => {
     
-    const userId = new mongodb.ObjectId("6289f95b782fc61f1491f279");
+    const userId = new mongodb.ObjectId(getUserId);
     db.collection('doc_orders').find( {TO_User_Id: userId} ).toArray()
         .then(orders => {
             const orderIds = orders.map(ord => {
@@ -31,12 +32,12 @@ exports.getOrders = (req, res, next) => {
             console.log("Inside OrderController.js -> getOrders");
             console.log(err);
         });
-    // res.render('orders.ejs', { path:'/orders',pageTitle:"Orders" });
+    res.render('orders.ejs', { path:'/orders',pageTitle:"Orders" });
 }
 
 exports.placeOrder = (req, res, next) => {
     
-    const userId = new mongodb.ObjectId("6289f95b782fc61f1491f279");
+    const userId = getUserId;
     
     var totalPrice = 0;
     var OrderItemObject = [];
@@ -57,8 +58,9 @@ exports.placeOrder = (req, res, next) => {
 
     orderId+=totalOrders;
 
-    Cart.find( {TCI_Created_By: new mongodb.ObjectId(userId) } )
+    Cart.find( {TCI_Created_By: userId } )
         .populate('TCI_ProductId')
+        .populate('TCI_Created_By')
         .then(cartData => {
             if (cartData.length == 0) {
                 console.log(cartData);
@@ -67,8 +69,8 @@ exports.placeOrder = (req, res, next) => {
                 res.redirect('/shop/products');
             } else {    
                 
-                //console.log(cartData);
-                //return;
+                // console.log(cartData);
+                // return;
                         cartData.forEach(element => {
                         var order = {
                             TOI_Order_Id:orderId, 
@@ -77,6 +79,8 @@ exports.placeOrder = (req, res, next) => {
                             TOI_Quantity:element.TCI_Quantity , 
                             TOI_Created_On: new Date()  
                         }
+                        var createOrderItems = new OrderItems(order);
+                        createOrderItems.save();
                         OrderItemObject.push(order);
 
                         totalPrice+=element.TCI_Quantity * element.TCI_ProductId.TP_Product_Price;   
@@ -91,18 +95,18 @@ exports.placeOrder = (req, res, next) => {
                         TO_Coupon_Code: couponCode,
                         TO_Created_On: new Date()
                     };
-                    console.log(OrderItemObject);
+                    console.log(OrderObject);
                     // console.log('--------------------');
                     // console.log(OrderItemObject);
                     
                     const createOrder = new Order(OrderObject);
-                    const createOrderItems = new OrderItems(OrderItemObject);
-                    console.log(createOrder);
-                    console.log('--------------------');
-                    console.log(createOrderItems);
+                    //const createOrderItems = new OrderItems(OrderItemObject);
+                    //console.log(createOrder);
+                    //console.log('--------------------');
+                    //console.log(createOrderItems);
                     // return;   
                     createOrder.save();
-                    createOrderItems.save();
+                    //createOrderItems.save();
                    
                     res.redirect('/shop/order-confirmation?orderId=' + orderId);
 
@@ -118,6 +122,7 @@ exports.placeOrder = (req, res, next) => {
 
 exports.getOrderConfirmation = (req, res, next) => {
     const orderId = req.query.orderId;
+    const userId = new mongodb.ObjectId(getUserId);
     if (!orderId) {
         console.log("Inside OrderController.js -> getOrderConfirmation");
         console.log('No Order');
@@ -125,71 +130,46 @@ exports.getOrderConfirmation = (req, res, next) => {
     }
     var totalPrice = 0;
     var shippingPrice = 200;
-    const userId = new mongodb.ObjectId("6289f95b782fc61f1491f279");
     
-    const db = getDB();
-    db.collection('doc_cart').deleteMany( {TCI_Created_By: userId } );
-    db.collection('doc_orders').find( { TO_Order_Id: orderId } ).next()
+    // db.collection('doc_cart').deleteMany( {TCI_Created_By: userId } );
+    Order.findOne( { TO_Order_Id: orderId } )
+        .populate('TO_User_Id')
         .then(orderDetail => {
-            if (orderDetail.TO_User_Id.toString() != userId.toString()) {
+            // console.log(orderDetail.TO_User_Id);
+            // return;
+            if (orderDetail.TO_User_Id._id.toString() != userId.toString()) {
                 console.log("Inside OrderController.js -> getOrderConfirmation");
                 console.log('USer Id does not match');
                 res.redirect('/shop/products');
             }
-            db.collection('doc_order_items').find( { TOI_Order_Id: orderId } ).toArray()
-                .then(orderItemDetail => {
-                    const productIds = orderItemDetail.map(id => {
-                        return id.TOI_Product_Id
+            OrderItems.find( { TOI_Order_Id: orderId } )
+                .populate('TOI_Product_Id')
+                .then(result => {
+                    //console.log(result);
+                    //return;
+                    result.forEach(element => {
+                        totalPrice+=element.TOI_Product_Price * element.TOI_Quantity;
+                        
                     });
-
-                    db.collection('doc_products').find( {_id: {$in:productIds  }} ).toArray()
-                            .then(products => {
-                                
-                                return products.map(p => {
-                                    return  {
-                                        ...p , 
-
-                                        TP_Product_Price: orderItemDetail.find(oi => {
-                                            return oi.TOI_Product_Id.toString() === p._id.toString()
-                                            
-                                        }).TOI_Product_Price,
-                                        
-                                        TOI_Quantity: orderItemDetail.find(oi => {
-                                            return oi.TOI_Product_Id.toString() === p._id.toString()
-                                            
-                                        }).TOI_Quantity,
-
-                                        TOI_Created_On: orderItemDetail.find(oi => {
-                                            return oi.TOI_Product_Id.toString() === p._id.toString();
-                                        }).TOI_Created_On,
-                                        
-                                    }
-                                })
-                        }).then(result => {
-                            //console.log(result);
-                            result.forEach(element => {
-                                totalPrice+=element.TP_Product_Price * element.TOI_Quantity;
-                            });
                             const orderObject = {
-                                orderDetails:result,
-                                totalPrice:totalPrice,
-                                shippingPrice:shippingPrice,
-                                grandTotal:totalPrice + shippingPrice
+                                orderDetails: orderDetail,
+                                orderItemDetails: result,
+                                totalPrice: totalPrice,
+                                shippingPrice: shippingPrice,
+                                grandTotal: totalPrice + shippingPrice
                             }  
-                            //console.log(orderObject);
+                            //console.log(orderObject.orderItemDetails.length);
+                            // return;
                             res.render('order-confirmation.ejs', { pageTitle: "Order Confirmation", order : orderObject });
                         })
+                        .catch(err => {
+                            console.log("Inside OrderController.js ->  getOrderConfirmation -> order_items");
+                            console.log(err);
+                        });
+                   
                            
                 })
-                .catch(err => {
-                    console.log("Inside OrderController.js ->  getOrderConfirmation -> order_items");
-                    console.log(err);
-                });
-        })
-        .catch(err => {
-            console.log("Inside OrderController.js -> getOrderConfirmation");
-            console.log(err);
-        });
-
+               
+       
     
-}
+};

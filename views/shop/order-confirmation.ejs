@@ -28,7 +28,7 @@
 
                         <h5>Your order Confirmed!</h5>
 
-                        <span class="font-weight-bold d-block mt-4">Hello, Chris</span>
+                        <span class="font-weight-bold d-block mt-4">Hello, <%= order.orderDetails.TO_User_Id.TUM_FirstName  %></span>
                         <span>You order has been confirmed and will be shipped in next two days!</span>
 
                         <div class="payment border-top mt-3 mb-3 border-bottom table-responsive">
@@ -41,8 +41,8 @@
                                             <div class="py-2">
 
                                                 <span class="d-block text-muted">Order Date</span>
-                                            <span><%= order.orderDetails[0].TOI_Created_On %></span>
-                                                
+                                            <span><%= order.orderDetails.TO_Created_On %></span>
+                                           
                                             </div>
                                         </td>
 
@@ -50,7 +50,7 @@
                                             <div class="py-2">
 
                                                 <span class="d-block text-muted">Order No</span>
-                                            <span><%= order.orderDetails[0].TOI_Order_Id %></span>
+                                            <span><%= order.orderDetails.TO_Order_Id %></span>
                                                 
                                             </div>
                                         </td>
@@ -68,7 +68,7 @@
                                             <div class="py-2">
 
                                                 <span class="d-block text-muted">Shiping Address</span>
-                                            <span>414 Advert Avenue, NY,USA</span>
+                                            <span> //*********************************** //</span>
                                                 
                                             </div>
                                         </td>
@@ -89,29 +89,30 @@
                             <div class="product border-bottom table-responsive">
 
                                 <table class="table table-borderless">
-
+                             
                                 <tbody>
-                                    <% for (let i = 0; i < order.orderDetails.length; i++) { %>
+                                    <% for (let i = 0; i < order.orderItemDetails.length; i++) { %>
+                                       
                                     <tr>
                                         <td width="20%">
-                                            <a href="/shop/product-detail/<%= order.orderDetails[i].TOI_Product_Id %>" target="_blank" class="title text-dark" data-abc="true">
-                                                <img src="<%= order.orderDetails[i].TP_Image_URL %>"  width="90">
+                                            <a href="/shop/product-detail/<%= order.orderItemDetails[i].TOI_Product_Id._id %>" target="_blank" class="title text-dark" data-abc="true">
+                                                <img src="<%= order.orderItemDetails[i].TOI_Product_Id.TP_Image_URL %>"  width="90">
                                             </a>
 
                                     </td>
                                 
                                     <td width="60%">
-                                        <a href="/shop/product-detail/<%= order.orderDetails[i].TOI_Product_Id %>" target="_blank" class="title text-dark" data-abc="true">
-                                            <span class="font-weight-bold"> <%= order.orderDetails[i].TP_Product_Title %></span>
+                                        <a href="/shop/product-detail/<%= order.orderItemDetails[i].TOI_Product_Id._id %>" target="_blank" class="title text-dark" data-abc="true">
+                                            <span class="font-weight-bold"> <%= order.orderItemDetails[i].TOI_Product_Id.TP_Product_Title %></span>
                                         </a>
                                         <div class="product-qty">
-                                            <span class="d-block">Quantity:  <%= order.orderDetails[i].TOI_Quantity %></span>
+                                            <span class="d-block">Quantity:  <%= order.orderItemDetails[i].TOI_Quantity %></span>
                                             
                                         </div>
                                     </td>
                                     <td width="20%">
                                         <div class="text-right">
-                                            <span class="font-weight-bold">₹ <%= order.orderDetails[i].TP_Product_Price * order.orderDetails[i].TOI_Quantity  %></span>
+                                            <span class="font-weight-bold">₹ <%= order.orderItemDetails[i].TP_Product_Price * order.orderItemDetails[i].TOI_Quantity  %></span>
                                         </div>
                                     </td>
                                     </tr>
