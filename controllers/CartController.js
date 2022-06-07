@@ -20,13 +20,14 @@ exports.getCart = (req, res, next) => {
            
             
             cartItems.forEach(element => {
+               // console.log(element);
                 totalPrice+=element.TCI_Quantity * element.TCI_ProductId.TP_Product_Price;   
             });
             res.render('cart.ejs', { pageTitle: "Cart", cartItems: cartItems, totalPrice: totalPrice });
         })
     
         .catch(err => {
-            console.log("Inside CartController, cartItems, productItems");
+            //console.log("Inside CartController, cartItems, productItems");
             console.log(err);
         });
     

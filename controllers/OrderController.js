@@ -68,8 +68,10 @@ exports.placeOrder = (req, res, next) => {
                 console.log('Cart is Empty');
                 res.redirect('/shop/products');
             } else {    
-                
-                // console.log(cartData);
+                const cartIds = cartData.map(c => {
+                    return c._id;
+                });
+                // console.log(cartIds);
                 // return;
                         cartData.forEach(element => {
                         var order = {
@@ -79,8 +81,8 @@ exports.placeOrder = (req, res, next) => {
                             TOI_Quantity:element.TCI_Quantity , 
                             TOI_Created_On: new Date()  
                         }
-                        var createOrderItems = new OrderItems(order);
-                        createOrderItems.save();
+                        // var createOrderItems = new OrderItems(order);
+                        // createOrderItems.save();
                         OrderItemObject.push(order);
 
                         totalPrice+=element.TCI_Quantity * element.TCI_ProductId.TP_Product_Price;   
@@ -95,21 +97,41 @@ exports.placeOrder = (req, res, next) => {
                         TO_Coupon_Code: couponCode,
                         TO_Created_On: new Date()
                     };
-                    console.log(OrderObject);
+                    //console.log(OrderObject);
                     // console.log('--------------------');
                     // console.log(OrderItemObject);
                     
                     const createOrder = new Order(OrderObject);
                     //const createOrderItems = new OrderItems(OrderItemObject);
-                    //console.log(createOrder);
+                    // console.log(createOrderItems);
+                    // return;
                     //console.log('--------------------');
                     //console.log(createOrderItems);
                     // return;   
-                    createOrder.save();
-                    //createOrderItems.save();
-                   
-                    res.redirect('/shop/order-confirmation?orderId=' + orderId);
+                    createOrder.save()
+                        .then(() => {
+                            OrderItems.insertMany(OrderItemObject)
+                                .then(() => {
+                                    Cart.deleteMany( {_id: {$in: cartIds }} )
+                                        .then(() => {
+                                            res.redirect('/shop/order-confirmation?orderId=' + orderId);
 
+                                        })
+                                        .catch(err => {
+                                            console.log(err);
+                                        });
+                                    
+                                })
+                                .catch(err => {
+                                    console.log(err);
+                                });
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    });
+
+                   
+                    
                 }
         });
                 
