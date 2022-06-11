@@ -1,5 +1,19 @@
 const User = require('../models/UserModel');
 
+exports.getLoginPage = (req, res, next) => {
+    res.render('registerandauth/login-user.ejs', { pageTitle: "Login User" });
+};
+
+exports.getRegisterPage = (req, res, next) => {
+    res.render('registerandauth/register-user.ejs', { pageTitle: "Register New User" });
+};
+
+exports.loginUser = (req, res, next) => {
+    const userId = req.body.username
+    const password = req.body.password;
+    console.log(userId + "----" + password);
+    res.redirect('/shop/')
+};
 
 exports.registerUser = (req, res, next) => {
     //console.log(req.body);

@@ -8,6 +8,8 @@ const path = require("path");
 const indexRoutes = require('./routes/index');
 const adminData = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
+const authRoutes = require("./routes/auth");
+
 const rootDir = require("./helpers/user-defined-path");
 const htmlError = require('./controllers/HtmlErrorController');
 const db = require('./helpers/database-mysql');
@@ -30,7 +32,8 @@ app.set('views', [
     path.join(rootDir, 'views'),
     path.join(rootDir, 'views/admin'),
     path.join(rootDir, 'views/htmlerrors'),
-    path.join(rootDir, 'views/shop')
+    path.join(rootDir, 'views/shop'),
+    path.join(rootDir, 'views/registerandauth'),
 
 ]);
 
@@ -40,6 +43,7 @@ app.set('views', [
 app.use('/', indexRoutes);
 app.use('/admin',adminData.routes);
 app.use('/shop' ,shopRoutes);
+app.use('/user' ,authRoutes.routes);
 
 
 app.use(express.static(path.join(__dirname, 'public'))); //express.static is used to serve static files like css or js files
