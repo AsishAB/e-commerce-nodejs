@@ -19,9 +19,24 @@ const db = require('./helpers/database-mysql');
 const mongoURL = require('./helpers/secret-data/mongodb-using-mongoose');
 const mongoose = require('mongoose');
 
+const session = require('express-session');
+const session_secret = require('./helpers/secret-files-gitallow/session-secret-code');
+const MongoDBStore = require('connect-mongodb-session')(session);
 
+const store = new MongoDBStore({
+    uri: mongoURL,
+    collection:"doc_sessions"
+});
 
 app.use(bodyParser.urlencoded({extended:false}));
+app.use(session({
+        secret: session_secret, 
+        resave:false, 
+        saveUninitialized:false, 
+        store:store
+    })
+);
+
 
 // app.set('views engine', 'pug');
     
