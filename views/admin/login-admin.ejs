@@ -26,6 +26,7 @@
 								</div>
 			      	</div>
 					<form action="/admin/add-product" method="POST" class="signin-form">
+						<input type="hidden" name="_csrf" value="<%= csrfToken %>">
 			      		<div class="form-group mt-3">
 			      			<input type="text" class="form-control" >
 			      			<label class="form-control-placeholder" for="username">Username</label>

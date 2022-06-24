@@ -27,8 +27,18 @@
           <div class="divider d-flex align-items-center my-4">
             <p class="text-center fw-bold mx-3 mb-0">Or</p>
           </div>
+          <% if (errorMessage != '') { %>
+            <div class="alert alert-warning d-flex align-items-center" role="alert">
+              <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Warning:"><use xlink:href="#exclamation-triangle-fill"/></svg>
+              <div>
+                <%= errorMessage %>
+              </div>
+            </div>
+          <% } %>
+              
           <form action="/user/loginUser" method="POST">
             <!-- Email input -->
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
             <div class="form-outline mb-4">
               <input type="email" id="username" name="username" class="form-control form-control-lg"
                 placeholder="Enter a valid email address" />

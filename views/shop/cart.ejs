@@ -54,6 +54,7 @@
                                 <td class="text-right d-none d-md-block"> 
                                     <a data-original-title="Save to Wishlist" title="" href="javascript:" class="btn btn-light" data-toggle="tooltip" data-abc="true"> <i class="fa fa-heart"></i></a>
                                     <form method="POST" action="/shop/removeItemFromCart">
+                                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                         <input type="hidden" name="cart_id" id="cart_id" value="<%= cartItems[i]._id %>">
                                         <button type="submit"  class="btn btn-light" data-abc="true"> Remove</button> 
                                     </form>

@@ -4,7 +4,7 @@ const argon2 = require('argon2');
 
 //Password is 'aa' for all as of 23 June 2022
 exports.getRegisterPage = (req, res, next) => {
-    const isLoggedIn = req.session.isLoggedIn ? req.session.isLoggedIn : 
+    const isLoggedIn = req.session.isLoggedIn ? req.session.isLoggedIn : false;
     res.render('registerandauth/register-user.ejs', { pageTitle: "Register New User" });
 };
 
@@ -24,8 +24,9 @@ exports.registerUser = (req, res, next) => {
            
             if(result.length != 0) {
                 //console.log(result);
-                console.log("Inside UserController -> registerUser")
-                console.log("User exists");
+                // console.log("Inside UserController -> registerUser")
+                // console.log("User exists");
+                req.flash('error','User already exists. Please login');
                 return res.redirect('/user/login');
             } else {
                     argon2.hash(confirm_password)
@@ -58,7 +59,7 @@ exports.registerUser = (req, res, next) => {
 
 exports.getLoginPage = (req, res, next) => {
     
-    res.render('registerandauth/login-user.ejs', { pageTitle: "Login User" });
+    res.render('registerandauth/login-user.ejs', { pageTitle: "Login User", errorMessage: req.flash('error') });
 };
 
 
@@ -111,7 +112,11 @@ exports.loginUser = (req, res, next) => {
 
 exports.logoutUser  = (req, res, next) => {
     req.session.destroy(err => {
-        console.log(err);
+        if (err) {
+            console.log("Inside UserController -> logoutUser");
+            console.log("Here");
+            console.log(err);
+        }
         res.redirect('/user/login');  
     })
 };

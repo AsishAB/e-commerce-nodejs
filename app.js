@@ -4,6 +4,8 @@ const express = require("express");
 const bodyParser = require('body-parser');
 const app = express();
 const path = require("path");
+const cookieParser = require('cookie-parser')
+const flash = require('connect-flash');
 
 const indexRoutes = require('./routes/index');
 const adminData = require("./routes/admin");
@@ -23,10 +25,18 @@ const session = require('express-session');
 const session_secret = require('./helpers/secret-files-gitallow/session-secret-code');
 const MongoDBStore = require('connect-mongodb-session')(session);
 
+
+
 const store = new MongoDBStore({
     uri: mongoURL,
     collection:"doc_sessions"
 });
+
+const csrf = require('csurf');
+const csrfProtection = csrf();
+
+app.use(cookieParser());
+app.use(flash());
 
 app.use(bodyParser.urlencoded({extended:false}));
 app.use(session({
@@ -37,9 +47,16 @@ app.use(session({
     })
 );
 
-
+app.use(csrfProtection);
 // app.set('views engine', 'pug');
     
+
+app.use((req, res, next) => {
+    res.locals.isAuthenticated = req.session.isLoggedIn;
+    res.locals.csrfToken = req.csrfToken();
+    next();
+});
+
 
 app.set('views engine', 'ejs');
 // app.set('views','views'); // All our HTML pages are in 'views' folder
