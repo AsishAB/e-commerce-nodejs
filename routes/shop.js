@@ -12,6 +12,7 @@ const cartController = require('../controllers/CartController');
 const checkoutController = require('../controllers/CheckoutController');
 const orderController = require('../controllers/OrderController');
 const userController = require('../controllers/UserController');
+const AuthMiddleware = require('../middlewares/AuthMiddleware');
 
 router.get('/', shopController.getShopIndexPage);
 
@@ -19,22 +20,22 @@ router.post('/register-user', userController.registerUser);
 
 router.get('/products', shopController.getAllProducts);
 
-router.get('/product-detail/:id', shopController.getProductDetail);
+router.get('/product-detail/:id',  shopController.getProductDetail);
 
-router.get('/cart', cartController.getCart);
+router.get('/cart', AuthMiddleware, cartController.getCart);
 
-router.post('/addToCart', cartController.addToCart);
+router.post('/addToCart',AuthMiddleware, cartController.addToCart);
 
-router.post('/removeItemFromCart', cartController.removeItemFromCart);
+router.post('/removeItemFromCart',AuthMiddleware, cartController.removeItemFromCart);
 
-router.get('/checkout', checkoutController.getCheckout);
+router.get('/checkout', AuthMiddleware,checkoutController.getCheckout);
 
 
-router.post('/placeOrder', orderController.placeOrder);
+router.post('/placeOrder', AuthMiddleware,orderController.placeOrder);
 
-router.get('/order-confirmation', orderController.getOrderConfirmation);
+router.get('/order-confirmation',AuthMiddleware, orderController.getOrderConfirmation);
 
-router.get('/orders', orderController.getOrders);
+router.get('/orders',AuthMiddleware, orderController.getOrders);
 
 
 
