@@ -1,8 +1,10 @@
 const User = require('../models/UserModel');
+const argon2 = require('argon2');
 
 
+//Password is 'aa' for all as of 23 June 2022
 exports.getRegisterPage = (req, res, next) => {
-    
+    const isLoggedIn = req.session.isLoggedIn ? req.session.isLoggedIn : 
     res.render('registerandauth/register-user.ejs', { pageTitle: "Register New User" });
 };
 
@@ -15,20 +17,42 @@ exports.registerUser = (req, res, next) => {
     const phoneNo = req.body.phoneNo;
     const password = req.body.password;
     const confirm_password = req.body.confirm_password;
+    
     //console.log(firstName+" "+lastName+" "+emailId+" "+phoneNo+" "+password+" "+confirm_password);
-
-    const user = new User({TUM_FirstName:firstName, TUM_LastName:lastName, TUM_Email:emailId, TUM_MobileNo:phoneNo, TUM_Password:confirm_password,TUM_Role:'customer'});
-
-    user.save()
-        .then(() => {
-            // console.log("Inside UserController.js");
-            // console.log(result);
+    User.find({$or: [{TUM_Email: emailId}, {TUM_MobileNo: phoneNo}] })
+        .then(result => {
+           
+            if(result.length != 0) {
+                //console.log(result);
+                console.log("Inside UserController -> registerUser")
+                console.log("User exists");
+                return res.redirect('/user/login');
+            } else {
+                    argon2.hash(confirm_password)
+                        .then(hashedPassword => {
+                            const user = new User({TUM_FirstName:firstName, TUM_LastName:lastName, TUM_Email:emailId, TUM_MobileNo:phoneNo, TUM_Password:hashedPassword,TUM_Role:'customer'});
+                            user.save()
+                            .then(() => {
+                                console.log("Inside UserController -> registerUser")
+                                console.log("User is successfully registered");
+                            })
+                            .catch(err => {
+                                //console.log("Inside UserController.js");
+                                console.log(err);
+                            });
+                        })
+                        .catch(err => {
+                            //console.log("Inside UserController.js");
+                            console.log(err);
+                        });
+                   
+        
+            }
         })
         .catch(err => {
-            console.log("Inside UserController.js");
             console.log(err);
-        });
-        
+        })
+    
 }
 
 
@@ -43,15 +67,52 @@ exports.loginUser = (req, res, next) => {
     req.session.isLoggedIn = true;
     const userId = req.body.username;
     const password = req.body.password;
-    //console.log(userId + "----" + password);
-    res.redirect('/user/login');
+    User.findOne({$or: [{TUM_Email:userId},{TUM_MobileNo:userId}]})
+        .then(result => {
+            if( !result ) {
+                console.log("Inside UserController -> loginUser");
+                console.log("No User Found");
+            } else {
+                argon2.verify(result.TUM_Password, password)
+                    .then(doMatch => {
+                        // console.log("Inside UserController -> loginUser");
+                        // console.log(doMatch);
+                        if (doMatch) {
+                            console.log("Inside UserController -> loginUser");
+                            //console.log(req.session);
+                            req.session.isLoggedIn = true;
+                            req.session.user = result;
+                            req.session.save(err => {
+                                
+                                if (err) {
+                                    console.log("Inside UserController -> loginUser");
+                                    console.log("Here");
+                                    console.log(err);
+                                }
+                                res.redirect('/user/login');
+                            });
+                            
+                        } else {
+                            console.log("Inside UserController -> loginUser");
+                            console.log("Password do NOT match");
+                        }
+
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    }); 
+            }
+        })
+        .catch(err => {
+            console.log(err);
+        }); 
 };
 
 
 exports.logoutUser  = (req, res, next) => {
     req.session.destroy(err => {
         console.log(err);
-        res.redirect('/user/login');
+        res.redirect('/user/login');  
     })
 };
 
