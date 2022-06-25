@@ -15,6 +15,9 @@ router.get('/register', userController.getRegisterPage);
 
 router.post('/register-user', userController.registerUser);
 
+router.get('/reset-password', userController.getResetPassword);
+
+router.post('/reset-password', userController.resetPassword);
 
 
 exports.routes = router;

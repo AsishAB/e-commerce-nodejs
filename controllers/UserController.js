@@ -59,8 +59,8 @@ exports.registerUser = (req, res, next) => {
 
 exports.getLoginPage = (req, res, next) => {
     let message = req.flash('error').length > 0 ? req.flash('error')[0] : '' ;
-    console.log(req.flash('error'));
-    console.log(message);
+    // console.log(req.flash('error'));
+    // console.log(message);
     res.render('registerandauth/login-user.ejs', { pageTitle: "Login User", errorMessage: message });
 };
 
@@ -127,3 +127,16 @@ exports.logoutUser  = (req, res, next) => {
     })
 };
 
+
+exports.getResetPassword = (req, res, next) => {
+    let message = req.flash('error').length > 0 ? req.flash('error')[0] : '' ;
+    const isLoggedIn = req.session.isLoggedIn ? req.session.isLoggedIn : false;
+    res.render('registerandauth/reset-password.ejs', { pageTitle: "Reset Password",isLoggedIn: isLoggedIn  , errorMessage: message });
+};
+
+
+exports.resetPassword = (req, res, next) => {
+    const email = req.body.username;
+    console.log(email);
+    //Check if the email is registered.
+};
