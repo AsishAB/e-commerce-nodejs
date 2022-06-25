@@ -27,7 +27,7 @@
           <div class="divider d-flex align-items-center my-4">
             <p class="text-center fw-bold mx-3 mb-0">Or</p>
           </div>
-          <% if (errorMessage != '') { %>
+          <% if (errorMessage != '' && errorMessage != undefined) { %>
             <div class="alert alert-warning d-flex align-items-center" role="alert">
               <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Warning:"><use xlink:href="#exclamation-triangle-fill"/></svg>
               <div>

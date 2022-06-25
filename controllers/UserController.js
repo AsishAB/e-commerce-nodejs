@@ -58,8 +58,10 @@ exports.registerUser = (req, res, next) => {
 
 
 exports.getLoginPage = (req, res, next) => {
-    
-    res.render('registerandauth/login-user.ejs', { pageTitle: "Login User", errorMessage: req.flash('error') });
+    let message = req.flash('error').length > 0 ? req.flash('error')[0] : '' ;
+    console.log(req.flash('error'));
+    console.log(message);
+    res.render('registerandauth/login-user.ejs', { pageTitle: "Login User", errorMessage: message });
 };
 
 
@@ -71,8 +73,10 @@ exports.loginUser = (req, res, next) => {
     User.findOne({$or: [{TUM_Email:userId},{TUM_MobileNo:userId}]})
         .then(result => {
             if( !result ) {
-                console.log("Inside UserController -> loginUser");
-                console.log("No User Found");
+                req.flash('error','No User Found');
+                return res.redirect('/user/login');
+                // console.log("Inside UserController -> loginUser");
+                // console.log("No User Found");
             } else {
                 argon2.verify(result.TUM_Password, password)
                     .then(doMatch => {
@@ -94,8 +98,10 @@ exports.loginUser = (req, res, next) => {
                             });
                             
                         } else {
-                            console.log("Inside UserController -> loginUser");
-                            console.log("Password do NOT match");
+                            req.flash('error','Entered Password is wrong');
+                            return res.redirect('/user/login');
+                            // console.log("Inside UserController -> loginUser");
+                            // console.log("Password do NOT match");
                         }
 
                     })
@@ -114,7 +120,7 @@ exports.logoutUser  = (req, res, next) => {
     req.session.destroy(err => {
         if (err) {
             console.log("Inside UserController -> logoutUser");
-            console.log("Here");
+            
             console.log(err);
         }
         res.redirect('/user/login');  
