@@ -1,6 +1,6 @@
 const User = require('../models/UserModel');
 const argon2 = require('argon2');
-
+const crypto = require('crypto'); //Default Node JS package; used to generate toekn for password-reset, etc.
 
 //Password is 'aa' for all as of 23 June 2022
 exports.getRegisterPage = (req, res, next) => {
@@ -136,6 +136,14 @@ exports.getResetPassword = (req, res, next) => {
 
 
 exports.resetPassword = (req, res, next) => {
+    crypto.randomBytes(32, (err, buffer) => {
+        if (err) {
+            console.log(err);
+            req.flash('error', "Some Server Error occured. Please try again");
+            return res.redirect('/shop/reset-password');
+        }
+        const token = buffer.toString('hex');
+    })
     const email = req.body.username;
     console.log(email);
     //Check if the email is registered.
