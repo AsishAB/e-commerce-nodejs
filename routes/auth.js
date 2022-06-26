@@ -19,5 +19,8 @@ router.get('/reset-password', userController.getResetPassword);
 
 router.post('/reset-password', userController.resetPassword);
 
+router.get('/update-password', userController.getUpdatePassword);
+
+router.post('/update-password', userController.updatePassword);
 
 exports.routes = router;

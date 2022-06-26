@@ -1,6 +1,8 @@
 const User = require('../models/UserModel');
+const ResetPassword = require('../models/ResetPasswordModel');
 const argon2 = require('argon2');
 const crypto = require('crypto'); //Default Node JS package; used to generate toekn for password-reset, etc.
+
 
 //Password is 'aa' for all as of 23 June 2022
 exports.getRegisterPage = (req, res, next) => {
@@ -129,9 +131,11 @@ exports.logoutUser  = (req, res, next) => {
 
 
 exports.getResetPassword = (req, res, next) => {
+    //console.log(req.flash('error')[0]);
     let message = req.flash('error').length > 0 ? req.flash('error')[0] : '' ;
     const isLoggedIn = req.session.isLoggedIn ? req.session.isLoggedIn : false;
     res.render('registerandauth/reset-password.ejs', { pageTitle: "Reset Password",isLoggedIn: isLoggedIn  , errorMessage: message });
+
 };
 
 
@@ -140,11 +144,83 @@ exports.resetPassword = (req, res, next) => {
         if (err) {
             console.log(err);
             req.flash('error', "Some Server Error occured. Please try again");
-            return res.redirect('/shop/reset-password');
+            return res.redirect('/user/reset-password');
         }
         const token = buffer.toString('hex');
-    })
-    const email = req.body.username;
-    console.log(email);
-    //Check if the email is registered.
+        const userId = req.body.username;
+        User.findOne({$or: [{TUM_Email:userId},{TUM_MobileNo:userId}]})
+            .then(result => {
+                if (!result) {
+                    req.flash('error', "No such user found in our database");
+                    return res.redirect('/user/reset-password');
+                }
+
+                const resetPassword = new ResetPassword({
+                    TRP_Registered_UserId: userId,
+                    TRP_Token: token,
+                    TRP_Token_ExpiresOn: Date.now(),
+                    TRP_PasswordRequest_Date: Date.now()
+                });
+                resetPassword.save()
+                    .then(() => {
+                        var updatePasswordURL = `http://localhost:3000/user/update-password?userId=${userId}&token=${token}`;
+                        return res.redirect(updatePasswordURL);
+                        //Send email 
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    })
+
+                
+            });
+    });
+    
+
+    
+};
+
+exports.getUpdatePassword = (req, res, next) => {
+    let message = req.flash('error').length > 0 ? req.flash('error')[0] : '' ;
+    const isLoggedIn = req.session.isLoggedIn ? req.session.isLoggedIn : false;
+    const userId = req.query.userId;
+    const token = req.query.token;
+    const tokenObject = {
+        userId:userId,
+        token:token
+    }
+    //console.log(userId + "======" + token);
+    res.render('registerandauth/update-password.ejs', { pageTitle: "Update Password",isLoggedIn: isLoggedIn  , errorMessage: message, tokenObject:tokenObject });
+
+};
+
+
+exports.updatePassword = (req, res, next) => {
+    const userId = req.body.userId;
+    const token = req.body.token;
+    const new_password = req.body.new_password;
+    const confirm_new_password = req.body.confirm_new_password;
+    User.findOne({$or: [{TUM_Email:userId},{TUM_MobileNo:userId}]})
+        .then(result => {
+            if (!result) {
+                req.flash('error', "No such user found in our database");
+                return res.redirect('/user/update-password');
+            }
+            ResetPassword.findOne({TRP_Registered_UserId : userId})
+                .then(result => {
+                    if(!result){
+                        req.flash('error', "Error while resetting Password. Please try again");
+                        return res.redirect('/user/reset-password');
+                    }
+                    if (token === result.TRP_Token)  {
+
+                    } else {
+                        req.flash('error', "Invalid Token");
+                        return res.redirect('/user/update-password');
+                    }
+                })
+                .catch(err => {
+                    console.log(err);
+                })
+        });
+
 };
