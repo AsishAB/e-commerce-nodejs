@@ -188,7 +188,11 @@ exports.getUpdatePassword = (req, res, next) => {
         userId:userId,
         token:token
     }
-    //console.log(userId + "======" + token);
+    // console.log(tokenObject);
+    if ((userId == '' || userId == undefined) && (token == '' || token == undefined )) {
+        req.flash('error', "Incorrect User Id or Token. Please follow the process again");
+        return res.redirect('/user/reset-password');
+    }
     res.render('registerandauth/update-password.ejs', { pageTitle: "Update Password",isLoggedIn: isLoggedIn  , errorMessage: message, tokenObject:tokenObject });
 
 };
@@ -199,20 +203,49 @@ exports.updatePassword = (req, res, next) => {
     const token = req.body.token;
     const new_password = req.body.new_password;
     const confirm_new_password = req.body.confirm_new_password;
+    //console.log(req.body);
     User.findOne({$or: [{TUM_Email:userId},{TUM_MobileNo:userId}]})
         .then(result => {
+            //console.log(result);
             if (!result) {
                 req.flash('error', "No such user found in our database");
+                //console.log("No such user found in our database");
                 return res.redirect('/user/update-password');
             }
             ResetPassword.findOne({TRP_Registered_UserId : userId})
-                .then(result => {
-                    if(!result){
+                .sort({TRP_PasswordRequest_Date : 'descending'})
+                .then(passwordResult => {
+                    console.log(passwordResult);
+                    if(!passwordResult){
                         req.flash('error', "Error while resetting Password. Please try again");
+                        //console.log("Error while resetting Password. Please try again");
                         return res.redirect('/user/reset-password');
                     }
-                    if (token === result.TRP_Token)  {
-
+                    if (token === passwordResult.TRP_Token)  {
+                        argon2.hash(confirm_new_password)
+                        .then(hashedPassword => {
+                            User.findById(result._id)
+                                .then(userResult => {
+                                    //console.log("Inside UserController -> updatePassword");
+                                    //console.log(userResult)
+                                    userResult.TUM_Password = hashedPassword;
+                                    userResult.save()
+                                        .then(() => {
+                                            ResetPassword.findByIdAndRemove(passwordResult._id);
+                                            // console.log("Inside UserController -> updatePassword");
+                                            // console.log("Password reset successfully");
+                                            return res.redirect('/user/login');
+                                        })
+                                        .catch(err => {
+                                            console.log(err);
+                                        }); 
+                                })
+                                .catch(err => {
+                                    console.log(err);
+                                }); 
+                            //const user = new User({TUM_FirstName:firstName, TUM_LastName:lastName, TUM_Email:emailId, TUM_MobileNo:phoneNo, TUM_Password:hashedPassword,TUM_Role:'customer'});
+                            // user.save()
+                        });
                     } else {
                         req.flash('error', "Invalid Token");
                         return res.redirect('/user/update-password');
