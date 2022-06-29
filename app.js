@@ -52,7 +52,7 @@ app.use(csrfProtection);
     
 
 app.use((req, res, next) => {
-    res.locals.isAuthenticated = req.session.isLoggedIn;
+    res.locals.isAuthenticated = req.session.isLoggedIn; // Used in all views (navigation.ejs)
     res.locals.csrfToken = req.csrfToken();
     next();
 });

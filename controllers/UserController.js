@@ -37,7 +37,7 @@ exports.registerUser = (req, res, next) => {
                             user.save()
                             .then(() => {
                                 console.log("Inside UserController -> registerUser")
-                                console.log("User is successfully registered");
+                                console.log("User has been successfully registered");
                             })
                             .catch(err => {
                                 //console.log("Inside UserController.js");
@@ -61,6 +61,7 @@ exports.registerUser = (req, res, next) => {
 
 exports.getLoginPage = (req, res, next) => {
     let message = req.flash('error').length > 0 ? req.flash('error')[0] : '' ;
+    //console.log(req.locals.isAuthenticateds);
     // console.log(req.flash('error'));
     // console.log(message);
     res.render('registerandauth/login-user.ejs', { pageTitle: "Login User", errorMessage: message });
@@ -85,7 +86,7 @@ exports.loginUser = (req, res, next) => {
                         // console.log("Inside UserController -> loginUser");
                         // console.log(doMatch);
                         if (doMatch) {
-                            console.log("Inside UserController -> loginUser");
+                           // console.log("Inside UserController -> loginUser");
                             //console.log(req.session);
                             req.session.isLoggedIn = true;
                             req.session.user = result;
@@ -93,7 +94,7 @@ exports.loginUser = (req, res, next) => {
                                 
                                 if (err) {
                                     console.log("Inside UserController -> loginUser");
-                                    console.log("Here");
+                                    
                                     console.log(err);
                                 }
                                 res.redirect('/user/login');
