@@ -6,6 +6,7 @@ const app = express();
 const path = require("path");
 const cookieParser = require('cookie-parser')
 const flash = require('connect-flash');
+const multer = require('multer');
 
 const indexRoutes = require('./routes/index');
 const adminData = require("./routes/admin");
@@ -39,6 +40,18 @@ app.use(cookieParser());
 app.use(flash());
 
 app.use(bodyParser.urlencoded({extended:false}));
+
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, '/public/my-uploads')
+    },
+    filename: function (req, file, cb) {
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
+      cb(null, file.fieldname + '-' + uniqueSuffix)
+    }
+});
+app.use(multer({ storage: storage }).single('public/product_images'));
+
 app.use(session({
         secret: session_secret, 
         resave:false, 
