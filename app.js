@@ -89,11 +89,13 @@ app.use('/', indexRoutes);
 app.use('/admin',adminData.routes);
 app.use('/shop' ,shopRoutes);
 app.use('/user' ,authRoutes.routes);
+app.use(htmlError.get404Page); //To display 404 page
 
 
+app.use('/images', express.static(path.join(__dirname, 'public/e_ecom/product_images')));
 app.use(express.static(path.join(__dirname, 'public'))); //express.static is used to serve static files like css or js files
 
-app.use(htmlError.get404Page); //To display 404 page
+
 
 // app.use( (req, res, next) => {
 //     db.query("SELECT * FROM tbl_users WHERE TUM_Id = ? ", [1])
