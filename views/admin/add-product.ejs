@@ -39,9 +39,9 @@
           </div>
           -->
           <label for="img_url" class="form-label">Image</label>
-            <input type="file" class="form-control" id="img_url" name="img_url">
+            <input type="file" class="form-control"  name="img_url">
           </div>
-          <% if (img_url != '') { %>
+          <% if (img_url != '' && img_url != undefined && img_url != null) { %>
             <div class="mb-3">
               <label for="img_url" class="form-label">Old Image</label>
               <br>

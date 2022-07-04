@@ -33,14 +33,19 @@ const storageProduct =  multer.diskStorage({
 
 });
 
+
+
+
 const multerMiddleware = (storageOption) => {
     // console.log(storageOption);
     if(storageOption == "profile"){
       return  multer({storage: storageProfile}).any();
 
     } else  if(storageOption == "products"){
+        // console.log(multer.diskStorage());
         // console.log("Inside MulterMiddleware");
         return multer({storage: storageProduct}).single('img_url');
+        // return multer({storage: storageProduct});
     }   
 }
 // app.use(express.static(path.join(__dirname,"public")));

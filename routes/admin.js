@@ -10,7 +10,7 @@ const productController = require('../controllers/ProductController');
 const AuthMiddleware = require('../middlewares/AuthMiddleware');
 const MulterMiddleware =  require('../middlewares/MulterMiddleware');
 
-
+const uploads = MulterMiddleware("products");
 
 const rootDir = require("../helpers/user-defined-path");
 

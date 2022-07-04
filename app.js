@@ -40,17 +40,18 @@ app.use(cookieParser());
 app.use(flash());
 
 app.use(bodyParser.urlencoded({extended:false}));
+// app.use()
 
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, '/public/my-uploads')
-    },
-    filename: function (req, file, cb) {
-      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
-      cb(null, file.fieldname + '-' + uniqueSuffix)
-    }
-});
-app.use(multer({ storage: storage }).single('public/product_images'));
+// const storage = multer.diskStorage({
+//     destination: function (req, file, cb) {
+//       cb(null, '/public/my-uploads')
+//     },
+//     filename: function (req, file, cb) {
+//       const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
+//       cb(null, file.fieldname + '-' + uniqueSuffix)
+//     }
+// });
+// app.use(multer({ storage: storage }).single('public/product_images'));
 
 app.use(session({
         secret: session_secret, 
@@ -81,7 +82,6 @@ app.set('views', [
     path.join(rootDir, 'views/registerandauth'),
 
 ]);
-
 
 
 

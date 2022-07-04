@@ -34,7 +34,7 @@ exports.addProduct = (req, res, next) => {
     const description = req.body.desc;
     const price = req.body.price;
     const userId = new mongodb.ObjectId(getUserId);
-    const imgURL = req.files;
+    const imgURL = req.file;
 
     console.log(imgURL);
     return;
