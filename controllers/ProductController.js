@@ -34,8 +34,12 @@ exports.addProduct = (req, res, next) => {
     const description = req.body.desc;
     const price = req.body.price;
     const userId = new mongodb.ObjectId(getUserId);
-    //const imgURL = req.body.img_url;
-    const imgURL = req.body.img_url ? req.body.img_url : 'https://live.staticflickr.com/5217/5471047557_4dc13f5376_n.jpg';
+    const imgURL = req.files;
+
+    console.log(imgURL);
+    return;
+
+    //const imgURL = req.body.img_url ? req.body.img_url : 'https://live.staticflickr.com/5217/5471047557_4dc13f5376_n.jpg';
     //console.log("Inside ProductController " + title + description + price + imgURL);
     let product;
     if (productId == '') {

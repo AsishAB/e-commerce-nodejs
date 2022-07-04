@@ -8,17 +8,17 @@ const userController = require('../controllers/UserController');
 
 router.get('/login', userController.getLoginPage);
 
-router.post('/loginUser', check() , userController.loginUser);
+router.post('/loginUser',  userController.loginUser);
 
 router.post('/logout', userController.logoutUser);
 
 router.get('/register', userController.getRegisterPage);
 
-router.post('/register-user', check() , userController.registerUser);
+router.post('/register-user', userController.registerUser);
 
 router.get('/reset-password', userController.getResetPassword);
 
-router.post('/reset-password', check() , userController.resetPassword);
+router.post('/reset-password', userController.resetPassword);
 
 router.get('/update-password', userController.getUpdatePassword);
 
