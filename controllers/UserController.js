@@ -2,9 +2,23 @@ const User = require('../models/UserModel');
 const ResetPassword = require('../models/ResetPasswordModel');
 const argon2 = require('argon2');
 const crypto = require('crypto'); //Default Node JS package; used to generate toekn for password-reset, etc.
+const globalURL = require('../helpers/secret-files-gitallow/global-url');
+const nodemailer = require('nodemailer');
+const sendGridTransport = require('nodemailer-sendgrid-transport');
+const sendGridAPIKey = require('../helpers/secret-data/sendgrid_api');
+const sendEMail = require('../helpers/secret-data/personal-email');
+// console.log(sendEMail.sendFrom);
+
+const transporter = nodemailer.createTransport(sendGridTransport({
+    auth: {
+        api_key : sendGridAPIKey
+    }
+}));
+        
 
 
-//Password is 'aa' for all as of 23 June 2022
+
+//Password is 'as' for all as of 23 June 2022
 exports.getRegisterPage = (req, res, next) => {
     const isLoggedIn = req.session.isLoggedIn ? req.session.isLoggedIn : false;
     res.render('registerandauth/register-user.ejs', { pageTitle: "Register New User" });
@@ -26,8 +40,8 @@ exports.registerUser = (req, res, next) => {
            
             if(result.length != 0) {
                 //console.log(result);
-                // console.log("Inside UserController -> registerUser")
-                // console.log("User exists");
+                console.log("Inside UserController -> registerUser")
+                console.log("User exists");
                 req.flash('error','User already exists. Please login');
                 return res.redirect('/user/login');
             } else {
@@ -38,6 +52,19 @@ exports.registerUser = (req, res, next) => {
                             .then(() => {
                                 console.log("Inside UserController -> registerUser")
                                 console.log("User has been successfully registered");
+                                res.redirect('/user/login');
+                                return transporter.sendMail({
+                                    to: sendEMail.sendTo,
+                                    from: "asish24in@gmail.com",
+                                    subject: "Registration Successful",
+                                    html: "<h1> Your Registration Is Succesful </h1>"
+                                });
+                                
+                            })
+                            .then(() => {
+                                console.log("Inside UserController -> registerUser")
+                                console.log("User has been successfully registered");
+                                res.redirect('/user/login');
                             })
                             .catch(err => {
                                 //console.log("Inside UserController.js");
@@ -164,9 +191,21 @@ exports.resetPassword = (req, res, next) => {
                 });
                 resetPassword.save()
                     .then(() => {
-                        var updatePasswordURL = `http://localhost:3000/user/update-password?userId=${userId}&token=${token}`;
-                        return res.redirect(updatePasswordURL);
+                        let updatePasswordURL = `${globalURL}user/update-password?userId=${userId}&token=${token}`;
+                        let passwordResetEmail = "<a href ="+updatePasswordURL+" class='btn btn-primary'> Click Here to Reset Your Password"+ "</a><br><h1>Token Expires On </h1><p>: " + Date.now() + "</p><br> <h1>Pasword Request for email id : </h1><p>" + userId  + "</p>";
+                        res.redirect('/user/login');
+                        return transporter.sendMail({
+                            to: sendEMail.sendTo,
+                            from: sendEMail.sendFrom,
+                            subject: "Password Reset Email",
+                            html: "<h1> " +  passwordResetEmail +  " </h1>"
+                        });
+                        
+                        
                         //Send email 
+                    })
+                    .then(() => {
+                        
                     })
                     .catch(err => {
                         console.log(err);
