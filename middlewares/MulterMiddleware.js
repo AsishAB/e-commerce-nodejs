@@ -1,10 +1,11 @@
 // Since this is a Middleware, it is used in the "routes" folder
 
 const multer = require("multer");
+const fileLocation = "public/file_uploads/";
 
 const storageProfile = multer.diskStorage({
     destination:(req, file, cb) => {
-        cb(null, 'profile_image/')
+        cb(null, fileLocation + 'profile_image/');
     },
     filename: (req, file, cb) => {
         let splitted_name = file.originalname.split(".");
@@ -19,7 +20,7 @@ const storageProfile = multer.diskStorage({
 const storageProduct =  multer.diskStorage({
     destination:(req, file, cb) => {
         //console.log(file);
-        cb(null, "images/")
+        cb(null, fileLocation + "product_images/");
     },
     filename: (req, file, cb) => {
         let splitted_name = file.originalname.split(".");
