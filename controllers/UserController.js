@@ -10,6 +10,7 @@ const sendEMail = require('../helpers/secret-data/personal-email');
 const Validation = require('../helpers/validation/validation');
 
 
+
 const transporter = nodemailer.createTransport(sendGridTransport({
     auth: {
         api_key : sendGridAPIKey
@@ -88,9 +89,12 @@ exports.registerUser = (req, res, next) => {
 
 
 exports.getLoginPage = (req, res, next) => {
+    const isLoggedIn  = req.session.isLoggedIn ? req.session.isLoggedIn : false;
+    
     let message = req.flash('error').length > 0 ? req.flash('error')[0] : '' ;
+    console.log("Inside UserController - < getLoginpage");
     //console.log(req.locals.isAuthenticateds);
-    // console.log(req.flash('error'));
+    console.log(req.flash('error'));
     // console.log(message);
     res.render('registerandauth/login-user.ejs', { pageTitle: "Login User", errorMessage: message });
 };
@@ -104,13 +108,19 @@ exports.loginUser = (req, res, next) => {
     const errorMsg = [];
     errorMsg.push(Validation.blankValidation(userId, "User Id (Email/ Mobile Number)"));
     errorMsg.push(Validation.blankValidation(password, "Login Password"));
-    console.log(errorMsg);
-    return;
+    //console.log(errorMsg[0]);
+    if (errorMsg.length > 0) {
+        req.flash('error', errorMsg[0]);
+        return res.redirect('/user/login');
+     
+    }
+    
 
     User.findOne({$or: [{TUM_Email:userId},{TUM_MobileNo:userId}]})
         .then(result => {
             if( !result ) {
-                req.flash('error','No User Found');
+                errorMsg.push('No User Found')
+                req.flash('error',errorMsg[0]);
                 return res.redirect('/user/login');
                 // console.log("Inside UserController -> loginUser");
                 // console.log("No User Found");
@@ -131,11 +141,12 @@ exports.loginUser = (req, res, next) => {
                                     
                                     console.log(err);
                                 }
-                                res.redirect('/user/login');
+                                return res.redirect('/user/login');
                             });
                             
                         } else {
-                            req.flash('error','Entered Password is wrong');
+                            errorMsg.push('Entered Password is wrong');
+                            req.flash('error', errorMsg);
                             return res.redirect('/user/login');
                             // console.log("Inside UserController -> loginUser");
                             // console.log("Password do NOT match");

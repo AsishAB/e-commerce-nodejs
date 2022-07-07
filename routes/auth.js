@@ -5,12 +5,13 @@ const router = express.Router();
 const { check } =  require('express-validator/check');
 
 const userController = require('../controllers/UserController');
+const AuthMiddleware = require('../middlewares/AuthMiddleware');
 
 router.get('/login', userController.getLoginPage);
 
 router.post('/loginUser',  userController.loginUser);
 
-router.post('/logout', userController.logoutUser);
+router.post('/logout', AuthMiddleware , userController.logoutUser);
 
 router.get('/register', userController.getRegisterPage);
 

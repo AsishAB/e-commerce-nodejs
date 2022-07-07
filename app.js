@@ -4,9 +4,9 @@ const express = require("express");
 const bodyParser = require('body-parser');
 const app = express();
 const path = require("path");
-const cookieParser = require('cookie-parser')
+const cookieParser = require('cookie-parser');
 const flash = require('connect-flash');
-const multer = require('multer');
+// const multer = require('multer');
 
 const indexRoutes = require('./routes/index');
 const adminData = require("./routes/admin");
@@ -36,8 +36,8 @@ const store = new MongoDBStore({
 const csrf = require('csurf');
 const csrfProtection = csrf();
 
-app.use(cookieParser());
-app.use(flash());
+
+// app.use(flash());
 
 app.use(bodyParser.urlencoded({extended:false}));
 // app.use()
@@ -55,13 +55,18 @@ app.use(bodyParser.urlencoded({extended:false}));
 
 app.use(session({
         secret: session_secret, 
-        resave:false, 
-        saveUninitialized:false, 
-        store:store
+        resave: false, 
+        saveUninitialized: false, 
+        store: store,
+        cookie: {
+            maxAge: 720000
+        }
     })
 );
-
+app.use(cookieParser());
 app.use(csrfProtection);
+app.use(flash());
+
 // app.set('views engine', 'pug');
     
 
@@ -83,7 +88,23 @@ app.set('views', [
 
 ]);
 
-
+app.use((req, res, next) => {
+    // throw new Error('Sync Dummy');
+    if (!req.session.user) {
+      return next();
+    }
+    User.findById(req.session.user._id)
+      .then(user => {
+        if (!user) {
+          return next();
+        }
+        req.user = user;
+        next();
+      })
+      .catch(err => {
+        next(new Error(err));
+      });
+  });
 
 app.use('/', indexRoutes);
 app.use('/admin',adminData.routes);
@@ -134,7 +155,7 @@ const port = process.env.PORT || 3000;
 
 mongoose.connect(mongoURL)
     .then(result => {
-        console.log(`E-Commerce app listening on port ${port} - http://localhost:${port}`)
+        console.log(`E-Commerce app listening on port ${port} - http://localhost:${port}`);
         app.listen(port);
     })
     .catch(err => {
