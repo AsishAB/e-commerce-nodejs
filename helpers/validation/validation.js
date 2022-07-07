@@ -40,6 +40,23 @@ function yearValidation(fieldId,fieldType, message) {
          return false;
       }
   }
+  
+   ############### Function to check custom special character  ############### 
+  ============== custom Special character is input =============
+  function checkCustomSpecialChar(fieldId,fieldName,splCharacterArr){
+    var str = $('#' + fieldId).val();
+    
+    for (var i = 0; i < splCharacterArr.length; i++){
+        if (str.indexOf(splCharacterArr[i]) > 0) {
+            $('#' + fieldId).focus();
+            swal("Special character " + splCharacterArr[i] + " is not allowed For "+ fieldName +"!!!");
+            return false;
+        }
+    }
+    return true;
+  }
+
+
 
 ==================================================================================================================
 ==================================================================================================================
@@ -49,7 +66,7 @@ function yearValidation(fieldId,fieldType, message) {
 
 
   /*##################Function to check Textfield having no value ################# */
-  exports.blankValidation = (data, fieldName,fieldType, message='') => {
+  exports.blankValidation = (data, fieldName, message='') => {
       /*=====================For Textfield blankValidation================== */
       //if(fieldType == "TextField" || fieldType == "TextArea"){
         if (data == ''){
@@ -126,163 +143,202 @@ function yearValidation(fieldId,fieldType, message) {
   
   /*############### Allow only Alphabets and Numeric Input and replace '' when find special character on keyup/keypress/keydown ################ */
   /*=========Call Below function by on on KeyUp======= */
-  function checkAlphabetAndNumber(fieldId){
-    var tempVal = $("#"+fieldId).val().replace(/[^a-zA-Z0-9 ]/g,'');
-    $("#"+fieldId).val(tempVal);
+  exports.checkAlphabetAndNumber = (data) => {
+    var tempVal = data.replace(/[^a-zA-Z0-9 ]/g,'');
+    return tempVal;
   }
-  function checkOnlyAlphabet(fieldId){
-    var tempVal = $("#"+fieldId).val().replace(/[^a-zA-Z ]/g,'');
-    $("#"+fieldId).val(tempVal);
+  exports.checkOnlyAlphabet = (data) => {
+    var tempVal = data.replace(/[^a-zA-Z ]/g,'');
+    return tempVal;
   }
   
   /*############### Allow only AlphaNumeric character ################ */
   /*=========Call Below function by on button submit ======= */
-  function allowAlphaNumericCharacter(fieldId,message){
+  exports.allowAlphaNumericCharacter = (data,message = '') => {
     var alphaNumericRegExp = new RegExp(/^([0-9]|[a-z])+([a-z]+)$/i);
     var fieldVal = $("#"+fieldId).val();
     
-    if(alphaNumericRegExp.test(fieldVal) == false){
-      $('#' + fieldId).focus();
-      swal(message);
-      return false;
+    if(alphaNumericRegExp.test(data) == false){
+      message = "Only Alpha Numeric Characters are allowed. No special characters.";
+      return message;
     }
-    return true;
+    return message;
   
   }
   
   /*############### Validate Special character ################ */
   /*=========Call Below function by on form submit or any event======= */
-  function checkSpecialCharacter(fieldId,message){
+  exports.checkSpecialCharacter = (data,message = '') => {
     var SpecialCharRegExp = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/;
-    var fieldVal = $("#"+fieldId).val();
     
-    if(SpecialCharRegExp.test(fieldVal)){
-      $('#' + fieldId).focus();
-      swal(message);
-      return false;
+    
+    if(SpecialCharRegExp.test(data)){
+      message = "Only Special Characters are allowed !";
+      return message;
     }
-    return true;
+    return message;
   }
   
-  /*############### Function to check custom special character  ############### */
-  /*============== custom Special character is input ============= */
-  function checkCustomSpecialChar(fieldId,fieldName,splCharacterArr){
-      var str = $('#' + fieldId).val();
-      
-      for (var i = 0; i < splCharacterArr.length; i++){
-          if (str.indexOf(splCharacterArr[i]) > 0) {
-              $('#' + fieldId).focus();
-              swal("Special character " + splCharacterArr[i] + " is not allowed For "+ fieldName +"!!!");
-              return false;
-          }
-      }
-      return true;
-  }
-  
+ 
   /*#################### first character not to be special character #####################*/
-  function checkSpecialCharacterFirst(fieldId,message){
+  exports.checkSpecialCharacterFirst = (data,message = '') => {
       var SpecialCharRegExp = new RegExp("['\\\\><!@#%?_:;.^*)(}{$&+-=|\"]");
       //var SpecialCharRegExp = /[ !@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/;
-      var strInputval = $('#' + fieldId).val();
-      var firstChar = strInputval.charAt(0);
+      
+      var firstChar = data[0];
   
       if(SpecialCharRegExp.test(firstChar)){
-        $('#' + fieldId).focus();
-        swal(message);
-        return false;
+        message = "First Character must not be a special character";
       }
-      return true;
+      return message;
   }
   
   /*#################### first character not to be special character Custom input of regExp #####################*/
-  function checkSpecialCharacterFirstCustom(fieldId,message,SpecialCharRegExp){
-      //var SpecialCharRegExp = /[ !@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/;
+  exports.checkSpecialCharacterFirstCustom = (data,message = '',SpecialCharRegExp) => {
+      
       var strInputval = $('#' + fieldId).val();
-      var firstChar = strInputval.charAt(0);
+      var firstChar = data[0];
   
       if(SpecialCharRegExp.test(firstChar)){
-        $('#' + fieldId).focus();
-        swal(message);
-        return false;
+        message = "First Character must be a Special Character as per the given rule";
+        return message;
       }
-      return true;
+      return message;
   }
   
   /*################ Function to check email for validation ############## */
-  function checkEmailId(fieldId,message){
+  function checkEmailId(data,message = ''){
       //var pattern = new RegExp(/^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/);
       var emailPattern = /^[A-Za-z0-9\-_\.]+@+[A-Za-z0-9\-\.]+\.+[A-Za-z]{2,10}$/;
-      var email = $('#' + fieldId).val();
+      var email = data;
       if (email != ''){
           if (emailPattern.test(email) == true)
-              return true;
+              return message;
           else{
-              $('#' + fieldId).focus();
-              swal(message);
-              return false;
+              message = "The Email id format is not correct. Accepted Format - example@example.com";
+              return message;
           }
       }else
-        return true;     
+        return message;     
   }
   
   
-  /*############## Function to check Valid indian Mobile number digit 0-9 and length=10 ############# */
+  /*############## Function to check Valid Indian Mobile number digit 0-9 and length=10 ############# */
   /*ex:  9861098610 */
-  function checkMobileNumberIN(fieldId,message) {
-      var mobile = $('#' + fieldId).val();
+  exports.checkMobileNumberIN = (data , message = '') => {
+      var mobile = data;
       var mobileReg = /^\d{10}$/;
       /* /^[0][1-9]\d{9}$|^[1-9]\d{9}$/g; */
   
       if (mobile != ''){
           if (mobileReg.test(mobile)){
-              return true;
+              return message;
           }else {
-              $('#' + fieldId).focus();
-              swal(message);
-              return false;
+              message = "This is not a valid Indian Mobile Number";
+              return message;
           }
       }else
-          return true;
+          return message;
   }
   
-  /*############## Function to check Valid indian Mobile number  digit 0-9, length=10, and countrycode ############# */
+  /*############## Function to check Valid Indian Mobile number  digit 0-9, length=10, and countrycode ############# */
   /*ex:  +91 9861098610 or +919861098610 */
-  function checkMobileNumberINCode(fieldId,message) {
-      var mobile = $('#' + fieldId).val();
+  exports.checkMobileNumberINCode = (data,message = '')  => {
+      var mobile = data;
       var mobileReg = /^(\+\d{1,3}[-])\d{10}$/;
   
       if (mobile != ''){
           if (mobileReg.test(mobile)){
-              return true;
+              return message;
           }else {
-              $('#' + fieldId).focus();
-              swal(message);
-              return false;
+              message = "This is not a valid Indian mobile number";
+              return message;
           }
       }else
-          return true;
+          return message;
   }
   /*############## Validate the telephone number ############## */
   /*example:+91-674-2495452  */
-  function validateTelephone(fieldId, message) {
-      var telephonVal = $('#'+fieldId).val();
+  exports.validateTelephone = (data, message = '') => {
+      var telephonVal = data;
       var telephoneReg = /^([1-9]{1}[0-9]{0,1}[0-9]{0,1}[\-]{1}[1-9]{1}[0-9]{1,5}[\-]{1})[1-9]{1}[0-9]{5,6}$/;
       //var telephoneReg = /^((\+[1-9]{1,4}[ \-]*)|(\([0-9]{2,3}\)[ \-]*)|([0-9]{2,4})[ \-]*)*?[0-9]{3,4}?[ \-]*[0-9]{3,4}?$/;
       alert((telephoneReg.test(telephonVal)));
       if (telephonVal != ''){
           if (telephoneReg.test(telephonVal))
-              return true;
+              return message;
           else {
-              $('#' + fieldId).focus();
-              swal(message);
-              return false;
+              message = "This is not a valid telephone/mobile number";
+              return message;
           }
       }else
-          return true;
+          return message;
   }
+
+  //function for remove special characters from field
+  exports.RemoveSQLCharacter = (data) => {
+  
+    var regex = new RegExp("['\\\\><!%?:;^*)(}{$&+=|\"]");
+    var str = new String(data);
+    let message = '';
+    if(regex.test(str)){
+      
+      message = "Special characters are not allowed";
+      return message;
+    }else
+      return message;
+     
+  }
+  
+ 
+  /*#################### first character not to be special character #####################*/
+  function RemoveSQLCharacterForPassword(objId){
+    //var SpecialCharRegExp = new RegExp("['\\\\><!@#%?_:;.^*)(}{&+-=|\"]");
+    var tempVal = $("#"+objId).val().replace(/['\\\\><%^}{+=|\"]/g,'');
+    document.getElementById(objId).value=tempVal;
+  }
+  
+  var PatternsDict = new Object();
+  // matches white space
+  PatternsDict.whitespacepat = /\s+/;
+  
+  function isWhitespace1st(data){
+    let message = '';
+     var strInput   = new String(data);
+     var objregExp  = new RegExp(PatternsDict.whitespacepat) ; 
+     if(objregExp.test(strInput)){
+       if(strInput.charAt(0)==" "){
+          
+          message = "White space is not allowed at first place";
+          return message;
+         }
+      }
+       return message ;
+  
+   }
+  function isWhitespaceLast(data){
+    let message = '';
+    var strInput   = new String(data);
+    var objregExp  = new RegExp(PatternsDict.whitespacepat) ; 
+    if(objregExp.test(strInput)){
+      if(strInput.charAt(strInput.length-1)==" "){
+        
+        message = "White space is not allowed at last place";
+        return message;
+        }
+    }
+      return message ;
+  
+  }
+  function leftTrim(element) { 
+      if(element)
+          element.value=element.value.replace(/^\s+/,"");
+  } 
+  
+
   //function to check file format
-  function checkImageFormat(sender,size){
-    var fileSize = $('#'+sender.id)[0].files[0].size/1024/1024;
+  exports.checkImageFormat = (data,size) => {
+    var fileSize = data.size/1024/1024;
     var validExts = new Array(".JPG", ".PNG", ".JPEG", ".PDF", ".TIFF");
     var fileExt = sender.value;
   
@@ -330,67 +386,5 @@ function yearValidation(fieldId,fieldType, message) {
     }else
       return true; 
   }
-  //function for remove special characters from field
-  function RemoveSQLCharacter(objId){
   
-    var regex = new RegExp("['\\\\><!%?:;^*)(}{$&+=|\"]");
-    var str = new String(document.getElementById(objId).value);
-    if(regex.test(str)){
-      document.getElementById(objId).value='';
-      document.getElementById(objId).focus();
-      swal("Special characters are not allowed");
-      return false;
-    }else
-      return true;
-     
-  }
-  function RemoveSQLCharacterForLabel(objId){
-  
-    var tempVal = $("#"+objId).val().replace(/['\\\\><!^*$}{+=|\"]/g,'');
-    document.getElementById(objId).value=tempVal;
-    //document.getElementById(objId).focus();
-   
-  }
-  /*#################### first character not to be special character #####################*/
-  function RemoveSQLCharacterForPassword(objId){
-    //var SpecialCharRegExp = new RegExp("['\\\\><!@#%?_:;.^*)(}{&+-=|\"]");
-    var tempVal = $("#"+objId).val().replace(/['\\\\><%^}{+=|\"]/g,'');
-    document.getElementById(objId).value=tempVal;
-  }
-  
-  var PatternsDict = new Object();
-  // matches white space
-  PatternsDict.whitespacepat = /\s+/;
-  
-  function isWhitespace1st(objId){
-     var strInput   = new String(document.getElementById(objId).value);
-     var objregExp  = new RegExp(PatternsDict.whitespacepat) ; 
-     if(objregExp.test(strInput)){
-       if(strInput.charAt(0)==" "){
-          document.getElementById(objId).focus();
-          swal("White space is not allowed at first place");
-          return false;
-         }
-      }
-       return true ;
-  
-   }
-  function isWhitespaceLast(objId){
-    var strInput   = new String(document.getElementById(objId).value);
-    var objregExp  = new RegExp(PatternsDict.whitespacepat) ; 
-    if(objregExp.test(strInput)){
-      if(strInput.charAt(strInput.length-1)==" "){
-        document.getElementById(objId).focus();
-        swal("White space is not allowed at last place");
-         return false;
-        }
-      }
-      return true ;
-  
-  }
-  function leftTrim(element)
-  { 
-      if(element)
-          element.value=element.value.replace(/^\s+/,"");
-  } 
   

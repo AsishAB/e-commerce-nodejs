@@ -7,7 +7,8 @@ const nodemailer = require('nodemailer');
 const sendGridTransport = require('nodemailer-sendgrid-transport');
 const sendGridAPIKey = require('../helpers/secret-data/sendgrid_api');
 const sendEMail = require('../helpers/secret-data/personal-email');
-// console.log(sendEMail.sendFrom);
+const Validation = require('../helpers/validation/validation');
+
 
 const transporter = nodemailer.createTransport(sendGridTransport({
     auth: {
@@ -100,6 +101,12 @@ exports.loginUser = (req, res, next) => {
     req.session.isLoggedIn = true;
     const userId = req.body.username;
     const password = req.body.password;
+    const errorMsg = [];
+    errorMsg.push(Validation.blankValidation(userId, "User Id (Email/ Mobile Number)"));
+    errorMsg.push(Validation.blankValidation(password, "Login Password"));
+    console.log(errorMsg);
+    return;
+
     User.findOne({$or: [{TUM_Email:userId},{TUM_MobileNo:userId}]})
         .then(result => {
             if( !result ) {
