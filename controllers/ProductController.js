@@ -4,13 +4,14 @@ const getUserId = require('../helpers/getUserId');
 const globalURL = require('../helpers/secret-files-gitallow/global-url');
 
 exports.getProductListAdmin = (req, res, next) => {
-    Product.find()
+    //console.log(req.user);
+    Product.find({TP_Created_By: req.user})
     .then(products => { 
         products.forEach(element => {
             element.TP_Product_Description = element.TP_Product_Description.substring(0,100) + "......";
             element.TP_Image_URL = globalURL + element.TP_Image_URL;
         });
-        res.render('admin/product.ejs', {pageTitle: "Admin Product List", pdts: products});
+        res.render('admin/product.ejs', { pageTitle: "Admin Product List", pdts: products });
     })
     .catch(err => {
         console.log("Inside ProductController \n");
@@ -50,7 +51,7 @@ exports.addProduct = (req, res, next) => {
     const title = req.body.title;
     const description = req.body.desc;
     const price = req.body.price;
-    const userId = new mongodb.ObjectId(getUserId);
+    const userId = req.user; //Available in app.js
     const imgURL = req.file;
 
     let fileName = "product_images/" + imgURL.filename;
@@ -72,20 +73,25 @@ exports.addProduct = (req, res, next) => {
         // product = new Product({TP_ProductId: productId ,TP_Product_Title:title,TP_Product_Description:description,TP_Image_URL:imgURL,TP_Product_Price:price,TP_Created_By:null});
         Product.findById(productId)
             .then(productFromId => {
-                 
+                if (productFromId.TP_Created_By.toString() != userId.toString()) {
+                    console.log("Inside ProductController ->addProduct (edit product) ");
+                    console.log("Unauthorised");
+                    req.flash('error', "Unauthorised");
+                    return res.redirect('/');
+                }
                 if (!fileName) {
                     productFromId.TP_Product_Title=title;
                     productFromId.TP_Product_Description=description;
                     
                     productFromId.TP_Product_Price=price;
-                    productFromId.TP_Created_By=userId;
+                    //productFromId.TP_Created_By=userId;
                    
                 } else {
                     productFromId.TP_Product_Title=title;
                     productFromId.TP_Product_Description=description;
                     productFromId.TP_Image_URL=fileName;
                     productFromId.TP_Product_Price=price;
-                    productFromId.TP_Created_By=userId;
+                    //productFromId.TP_Created_By=userId;
                     
                 }
                 productFromId.save()
@@ -108,6 +114,16 @@ exports.addProduct = (req, res, next) => {
 
 exports.deleteProduct = (req, res, next) => {
     const prodId  = req.body.productId;
+    Product.findById(prodId)
+        .then(productFromId => {
+            if (productFromId.TP_Created_By.toString() != userId.toString()) {
+                console.log("Inside ProductController ->addProduct (edit product) ");
+                console.log("Unauthorised");
+                req.flash('error', "Unauthorised");
+                return res.redirect('/');
+            }
+        });
+    
     Product.findByIdAndRemove(prodId)
     .then(() => {
         // console.log("Inside Product Controller.js");

@@ -12,6 +12,7 @@ const indexRoutes = require('./routes/index');
 const adminData = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
 const authRoutes = require("./routes/auth");
+const User = require('./models/UserModel');
 
 const rootDir = require("./helpers/user-defined-path");
 const htmlError = require('./controllers/HtmlErrorController');

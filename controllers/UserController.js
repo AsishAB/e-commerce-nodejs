@@ -42,8 +42,8 @@ exports.registerUser = (req, res, next) => {
            
             if(result.length != 0) {
                 //console.log(result);
-                console.log("Inside UserController -> registerUser")
-                console.log("User exists");
+                // console.log("Inside UserController -> registerUser")
+                // console.log("User exists");
                 req.flash('error','User already exists. Please login');
                 return res.redirect('/user/login');
             } else {
@@ -92,9 +92,9 @@ exports.getLoginPage = (req, res, next) => {
     const isLoggedIn  = req.session.isLoggedIn ? req.session.isLoggedIn : false;
     
     let message = req.flash('error').length > 0 ? req.flash('error')[0] : '' ;
-    console.log("Inside UserController - < getLoginpage");
+    //console.log("Inside UserController - < getLoginpage");
     //console.log(req.locals.isAuthenticateds);
-    console.log(req.flash('error'));
+    //console.log(req.flash('error'));
     // console.log(message);
     res.render('registerandauth/login-user.ejs', { pageTitle: "Login User", errorMessage: message });
 };
