@@ -22,9 +22,9 @@
                       <h5 class="card-title"><%= pdts[i].TP_Product_Title %></h5>
                       <p class="card-text"><%= pdts[i].TP_Product_Description %></p>
                       <p class="card-text"><span>₹ </span> <%= pdts[i].TP_Product_Price %></p>
-                      <a href="/admin/edit-product/<%= pdts[i]._id %>" class="btn border border-primary text-primary">Edit</a> &nbsp;
+                      <a href="/admin/edit-product/<%= pdts[i].TP_ProductId %>" class="btn border border-primary text-primary">Edit</a> &nbsp;
                       <form method="POST" action="/admin/delete-product">
-                        <input type="hidden" value="<%= pdts[i]._id %>" id="productId" name="productId">
+                        <input type="hidden" value="<%= pdts[i].TP_ProductId %>" id="productId" name="productId">
                         <button class="btn border border-danger text-danger">Delete</button>
                       </form>
                       

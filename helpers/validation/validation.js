@@ -72,9 +72,9 @@ function yearValidation(fieldId,fieldType, message) {
         if (data == ''){
           
           message = fieldName + " cannot be blank"; //fieldName example- Name, Mobile Number, etc.
-          return message;
+          return true;
         }
-        return message;
+        return false;
       //}
   
   

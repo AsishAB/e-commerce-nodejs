@@ -27,6 +27,11 @@ const productSchema  = new Schema({
         ref:'User', //The User Model. Has to be same as the model. Only available in Mongoose
         required:true
     },
+    TP_Updated_By: {
+        type: Schema.Types.ObjectId,
+        ref:'User', //The User Model. Has to be same as the model. Only available in Mongoose
+        //required:true
+    }
 
 });
 

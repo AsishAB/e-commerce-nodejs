@@ -102,14 +102,24 @@ exports.getLoginPage = (req, res, next) => {
 
 
 exports.loginUser = (req, res, next) => {
-    req.session.isLoggedIn = true;
+    // req.session.isLoggedIn = false;
     const userId = req.body.username;
     const password = req.body.password;
+    // console.log(req.body);
     const errorMsg = [];
-    errorMsg.push(Validation.blankValidation(userId, "User Id (Email/ Mobile Number)"));
-    errorMsg.push(Validation.blankValidation(password, "Login Password"));
-    //console.log(errorMsg[0]);
+    if  (Validation.blankValidation(userId)) {
+        errorMsg.push("User Id cannot be blank");
+        //return false;
+    }
+    if  (Validation.blankValidation(password)) {
+        errorMsg.push("Password cannot be blank");
+        //return false;
+    }
+    //errorMsg.push(Validation.blankValidation(password, "Login Password"));
+    //console.log(errorMsg.length);
     if (errorMsg.length > 0) {
+        //console.log("Here");
+        //console.log(errorMsg);
         req.flash('error', errorMsg[0]);
         return res.redirect('/user/login');
      
@@ -118,7 +128,9 @@ exports.loginUser = (req, res, next) => {
 
     User.findOne({$or: [{TUM_Email:userId},{TUM_MobileNo:userId}]})
         .then(result => {
+            //console.log(result);
             if( !result ) {
+                
                 errorMsg.push('No User Found')
                 req.flash('error',errorMsg[0]);
                 return res.redirect('/user/login');
@@ -133,6 +145,7 @@ exports.loginUser = (req, res, next) => {
                            // console.log("Inside UserController -> loginUser");
                             //console.log(req.session);
                             req.session.isLoggedIn = true;
+                            
                             req.session.user = result;
                             req.session.save(err => {
                                 
@@ -145,6 +158,7 @@ exports.loginUser = (req, res, next) => {
                             });
                             
                         } else {
+                            //console.log("Entered Password is wrong");
                             errorMsg.push('Entered Password is wrong');
                             req.flash('error', errorMsg);
                             return res.redirect('/user/login');
