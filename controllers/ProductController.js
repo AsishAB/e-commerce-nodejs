@@ -4,6 +4,7 @@ const mongodb = require('mongodb');
 // const getUserId = require('../helpers/getUserId');
 const globalURL = require('../helpers/secret-files-gitallow/global-url');
 const encryptDecryptText = require('../helpers/encrypt_decrypt/encryptDecryptText');
+const Validation = require('../helpers/validation/validation');
 
 exports.getProductListAdmin = (req, res, next) => {
     //console.log(req.user);
@@ -32,12 +33,12 @@ exports.getProductListAdmin = (req, res, next) => {
 
 exports.getAddProduct = (req, res, next) => {
     
-    const prodId = encryptDecryptText.decrypt(req.params.id, "private.pem");
+    const prodId = (req.params.id) ? encryptDecryptText.decrypt(req.params.id, "private.pem") : '';
     // console.log(prodId);
     // return;
     if (prodId == '' || prodId == undefined || prodId == null ) {
 
-        res.render('add-product.ejs',{ pageTitle: "Add Product",product: [] });
+        res.render('add-product.ejs',{ pageTitle: "Add Product",product: [], oldInput: {title: '',desc: '', price:'' } });
     } else {
         
         Product.findById(prodId)
@@ -47,7 +48,7 @@ exports.getAddProduct = (req, res, next) => {
                 // console.log("Inside ProductController \n");
                 // console.log(product);
                 
-                res.render('add-product.ejs', { pageTitle: "Edit Product", product: product });
+                res.render('add-product.ejs', { pageTitle: "Edit Product", product: product, oldInput: {title: '',desc: '', price:'' } });
             })  
              .catch(err => {
                 console.log("Inside ProductController \n");
@@ -61,6 +62,7 @@ exports.getAddProduct = (req, res, next) => {
 
 exports.addProduct = (req, res, next) => {
     //pdt.push({title:req.body.title});
+    const errorMsg = [];
     const userId = req.user._id; //Available in app.js
     if (!userId) {
         req.flash("error", "Unauthorised");
@@ -71,12 +73,33 @@ exports.addProduct = (req, res, next) => {
     const description = req.body.desc;
     const price = req.body.price;
     
-    //console.log(userId);
-    //return;
     const imgURL = req.file;
+   
 
     let fileName = (imgURL) ? "product_images/" + imgURL.filename : '';
+
+    if  (Validation.blankValidation(title)) {
+        errorMsg.push("Title cannot be blank");
+    }
+        
+    if  (Validation.blankValidation(description)) {
+        errorMsg.push("Description cannot be blank");
+    }
+        
+    if  (Validation.blankValidation(price)) {
+        errorMsg.push("Price cannot be blank");
+    }
+    if  (productId =='' && Validation.fileBlankValidation(imgURL)) {
+        errorMsg.push("Please select a file to upload");
+    }
+        
     
+    if (errorMsg.length > 0) {
+        console.log(errorMsg);
+        req.flash('error', errorMsg[0]);
+        return res.redirect('/admin/add-product');
+     
+    }
     //console.log("Inside ProductController " + title + description + price + imgURL);
     let product;
     if (productId == '') {

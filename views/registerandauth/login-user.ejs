@@ -36,20 +36,33 @@
               </div>
             </div>
           <% } %>
+          <% if (validationErrors.length > 0) { %>
+            <div class="alert alert-warning d-flex align-items-center" role="alert">
+              <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Warning:"><use xlink:href="#exclamation-triangle-fill"/></svg>
+              <div>
+                <ul>
+                  <% for (let i =0; i < validationErrors.length; i++)  { %>
+                          <li> <%= validationErrors[i]  %> </li>
+                  <% } %>
+                </ul>
+                
+              </div>
+            </div>
+          <% } %>
               
           <form action="/user/loginUser" method="POST">
             <!-- Email input -->
             <input type="hidden" name="_csrf" value="<%= csrfToken %>">
             <div class="form-outline mb-4">
-              <input type="email" id="username" name="username" class="form-control form-control-lg"
-                placeholder="Enter a valid email address" />
+              <input type="text" id="username" name="username" class="form-control form-control-lg"
+                placeholder="Enter a valid email address" value="<%= oldInput.username %>" />
               <label class="form-label" for="username">Email address</label>
             </div>
 
             <!-- Password input -->
             <div class="form-outline mb-3">
               <input type="password" id="password" name="password" class="form-control form-control-lg"
-                placeholder="Enter password" />
+                placeholder="Enter password" value="<%= oldInput.username %>" />
               <label class="form-label" for="password">Password</label>
             </div>
 

@@ -69,7 +69,7 @@ function yearValidation(fieldId,fieldType, message) {
   exports.blankValidation = (data, fieldName, message='') => {
       /*=====================For Textfield blankValidation================== */
       //if(fieldType == "TextField" || fieldType == "TextArea"){
-        if (data == ''){
+        if (data == '') {
           
           message = fieldName + " cannot be blank"; //fieldName example- Name, Mobile Number, etc.
           return true;
@@ -80,6 +80,22 @@ function yearValidation(fieldId,fieldType, message) {
   
   
   }
+
+   /*##################Function to check Textfield having no value ################# */
+   exports.fileBlankValidation = (data, fieldName, message='') => {
+    /*=====================For Textfield blankValidation================== */
+    //if(fieldType == "TextField" || fieldType == "TextArea"){
+      if (data == '' || data == undefined) {
+        
+        message = fieldName + " cannot be blank"; //fieldName example- Name, Mobile Number, etc.
+        return true;
+      }
+      return false;
+    //}
+
+
+
+}
   
   /*#################Function to Check the character length of a field ####################### */
   exports.fieldLengthCheck = (data,fieldLen, fieldName,checkType) => {
@@ -207,21 +223,33 @@ function yearValidation(fieldId,fieldType, message) {
   }
   
   /*################ Function to check email for validation ############## */
-  function checkEmailId(data,message = ''){
+  exports.checkEmailId = (data,message = '') => {
       //var pattern = new RegExp(/^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/);
       var emailPattern = /^[A-Za-z0-9\-_\.]+@+[A-Za-z0-9\-\.]+\.+[A-Za-z]{2,10}$/;
       var email = data;
       if (email != ''){
           if (emailPattern.test(email) == true)
-              return message;
+              return false;
           else{
               message = "The Email id format is not correct. Accepted Format - example@example.com";
-              return message;
+              return true;
           }
       }else
-        return message;     
+        return false;     
   }
   
+  /* ####################### Function to check if Password and Confirm Password match */
+  exports.checkPasswordConfPasswordMatch = (password, confirmPassword, message ='') => {
+    if (password.toString() === confirmPassword.toString()) {
+      return false;
+    } else {
+      message = "Password and Confirm Password Must match";
+      return true;
+    }
+  }
+
+
+
   
   /*############## Function to check Valid Indian Mobile number digit 0-9 and length=10 ############# */
   /*ex:  9861098610 */
@@ -232,13 +260,13 @@ function yearValidation(fieldId,fieldType, message) {
   
       if (mobile != ''){
           if (mobileReg.test(mobile)){
-              return message;
+              return false;
           }else {
               message = "This is not a valid Indian Mobile Number";
-              return message;
+              return true;
           }
       }else
-          return message;
+          return false;
   }
   
   /*############## Function to check Valid Indian Mobile number  digit 0-9, length=10, and countrycode ############# */

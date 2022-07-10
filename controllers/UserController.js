@@ -23,7 +23,8 @@ const transporter = nodemailer.createTransport(sendGridTransport({
 //Password is 'as' for all as of 23 June 2022
 exports.getRegisterPage = (req, res, next) => {
     const isLoggedIn = req.session.isLoggedIn ? req.session.isLoggedIn : false;
-    res.render('registerandauth/register-user.ejs', { pageTitle: "Register New User" });
+    let message = req.flash('error') ? req.flash('error')[0] : '';
+    res.render('registerandauth/register-user.ejs', { pageTitle: "Register New User", errorMessage: message, validationErrors: [] , oldInput: { username: '', password: '' } });
 };
 
 
@@ -35,17 +36,89 @@ exports.registerUser = (req, res, next) => {
     const phoneNo = req.body.phoneNo;
     const password = req.body.password;
     const confirm_password = req.body.confirm_password;
+    const validationError = [];
+    var errorMsg = '';
+
+    if  (Validation.blankValidation(firstName)) {
+        validationError.push("First name cannot be blank");
+        //return false;
+    }
+    
+    if  (Validation.blankValidation(lastName)) {
+        validationError.push("Last Name cannot be blank");
+        //return false;
+    }
+    
+    if  (Validation.blankValidation(emailId)) {
+        validationError.push("Email Id cannot be blank");
+        //return false;
+    }
+    
+    if  (emailId && Validation.checkEmailId(emailId)) {
+        validationError.push("The Email Id format is not correct. Accepted Format - example@example.com");
+    }
+
+    if  (Validation.blankValidation(phoneNo)) {
+        validationError.push("Mobile Number cannot be blank");
+        //return false;
+    }
+    
+     
+    if  (phoneNo && (Validation.checkMobileNumberIN(phoneNo))) {
+            validationError.push("The mobile number format is not correct. Please enter a 10-digit mobile number");
+    }
+
+    if  (Validation.blankValidation(password)) {
+            validationError.push("Password cannot be blank");
+        
+    }
+
+    if  (Validation.blankValidation(confirm_password)) {
+            validationError.push("Confirm Password cannot be blank");
+        
+    }
+
+    if  ((password && confirm_password) && Validation.checkPasswordConfPasswordMatch(password, confirm_password)) {
+        validationError.push("Password and Confirm Password must match");
+    
+    }
+   
+    if (validationError.length > 0) {
+        
+        return res.status(422).render('registerandauth/register-user.ejs', { 
+            pageTitle: "Register New User", 
+            errorMessage: errorMsg, 
+            validationErrors: validationError , 
+            oldInput: { 
+                firstName: firstName,
+                lastName: lastName,
+                emailId: emailId,
+                phoneNo: phoneNo ,
+                password: password,
+                confirm_password: confirm_password
+            } 
+        });
+       
+       
+    }
     
     //console.log(firstName+" "+lastName+" "+emailId+" "+phoneNo+" "+password+" "+confirm_password);
     User.find({$or: [{TUM_Email: emailId}, {TUM_MobileNo: phoneNo}] })
         .then(result => {
            
             if(result.length != 0) {
-                //console.log(result);
-                // console.log("Inside UserController -> registerUser")
-                // console.log("User exists");
-                req.flash('error','User already exists. Please login');
-                return res.redirect('/user/login');
+                
+                errorMsg = 'User' +TUM_Email + ' or ' + TUM_MobileNo +   ' already exists. Please login';
+                return res.status(422).render('registerandauth/login-user.ejs', { 
+                    pageTitle: "Login User", 
+                    errorMessage: errorMsg, 
+                    validationErrors: [] , 
+                    oldInput: {
+                     username: userId,
+                      password: password
+                    },
+                });
+               
             } else {
                     argon2.hash(confirm_password)
                         .then(hashedPassword => {
@@ -85,7 +158,7 @@ exports.registerUser = (req, res, next) => {
             console.log(err);
         })
     
-}
+};
 
 
 exports.getLoginPage = (req, res, next) => {
@@ -96,7 +169,7 @@ exports.getLoginPage = (req, res, next) => {
     //console.log(req.locals.isAuthenticateds);
     //console.log(req.flash('error'));
     // console.log(message);
-    res.render('registerandauth/login-user.ejs', { pageTitle: "Login User", errorMessage: message });
+    res.render('registerandauth/login-user.ejs', { pageTitle: "Login User", errorMessage: message,validationErrors: [] , oldInput: { username: '',password: '' } });
 };
 
 
@@ -106,23 +179,37 @@ exports.loginUser = (req, res, next) => {
     const userId = req.body.username;
     const password = req.body.password;
     // console.log(req.body);
-    const errorMsg = [];
+    const validationError = [];
+    var errorMsg = '';
     if  (Validation.blankValidation(userId)) {
-        errorMsg.push("User Id cannot be blank");
+        validationError.push("User Id cannot be blank");
+        //return false;
+    }
+    
+    if  (userId != '' && (Validation.checkEmailId(userId) || Validation.checkMobileNumberIN(userId))) {
+        validationError.push("The User Id format is not correct. Accepted Format - example@example.com or a 10-digit mobile number");
         //return false;
     }
     if  (Validation.blankValidation(password)) {
-        errorMsg.push("Password cannot be blank");
+        validationError.push("Password cannot be blank");
         //return false;
     }
     //errorMsg.push(Validation.blankValidation(password, "Login Password"));
     //console.log(errorMsg.length);
-    if (errorMsg.length > 0) {
-        //console.log("Here");
-        //console.log(errorMsg);
-        req.flash('error', errorMsg[0]);
-        return res.redirect('/user/login');
-     
+    if (validationError.length > 0) {
+       
+        return res.status(422).render('registerandauth/login-user.ejs', {
+            
+            pageTitle: 'Login User',
+            errorMessage: errorMsg,
+            validationErrors: validationError,
+            oldInput: {
+                username: userId,
+              password: password
+            },
+            
+          });
+       
     }
     
 
@@ -131,19 +218,26 @@ exports.loginUser = (req, res, next) => {
             //console.log(result);
             if( !result ) {
                 
-                errorMsg.push('No User Found')
-                req.flash('error',errorMsg[0]);
-                return res.redirect('/user/login');
-                // console.log("Inside UserController -> loginUser");
-                // console.log("No User Found");
+                errorMsg = 'No User Found';
+                //req.flash('error',errorMsg[0]);
+                return res.status(422).render('registerandauth/login-user.ejs', {
+            
+                    pageTitle: 'Login User',
+                    errorMessage: errorMsg,
+                    validationErrors: [],
+                    oldInput: {
+                        username: userId,
+                        password: password
+                    },
+                    
+                  });
+               
             } else {
                 argon2.verify(result.TUM_Password, password)
                     .then(doMatch => {
-                        // console.log("Inside UserController -> loginUser");
-                        // console.log(doMatch);
+                       
                         if (doMatch) {
-                           // console.log("Inside UserController -> loginUser");
-                            //console.log(req.session);
+                           
                             req.session.isLoggedIn = true;
                             
                             req.session.user = result;
@@ -153,17 +247,27 @@ exports.loginUser = (req, res, next) => {
                                     console.log("Inside UserController -> loginUser");
                                     
                                     console.log(err);
+                                    return res.redirect('/user/login');
                                 }
-                                return res.redirect('/user/login');
+                                return res.redirect('/user/dashboard');
                             });
                             
                         } else {
-                            //console.log("Entered Password is wrong");
-                            errorMsg.push('Entered Password is wrong');
-                            req.flash('error', errorMsg);
-                            return res.redirect('/user/login');
-                            // console.log("Inside UserController -> loginUser");
-                            // console.log("Password do NOT match");
+                           
+                            errorMsg = 'Entered Password is wrong';
+                            //req.flash('error', errorMsg);
+                            return res.status(422).render('registerandauth/login-user.ejs', {
+            
+                                pageTitle: 'Login User',
+                                errorMessage: errorMsg,
+                                validationErrors: [],
+                                oldInput: {
+                                    username: userId,
+                                    password: ''
+                                },
+                                
+                              });
+                           
                         }
 
                     })
