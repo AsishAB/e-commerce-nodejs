@@ -185,8 +185,8 @@ exports.loginUser = (req, res, next) => {
         validationError.push("User Id cannot be blank");
         //return false;
     }
-    
-    if  (userId != '' && (Validation.checkEmailId(userId) || Validation.checkMobileNumberIN(userId))) {
+   
+    if  (userId != '' && !(Validation.checkEmailId(userId) || Validation.checkMobileNumberIN(userId))) {
         validationError.push("The User Id format is not correct. Accepted Format - example@example.com or a 10-digit mobile number");
         //return false;
     }
@@ -204,7 +204,7 @@ exports.loginUser = (req, res, next) => {
             errorMessage: errorMsg,
             validationErrors: validationError,
             oldInput: {
-                username: userId,
+              username: userId,
               password: password
             },
             
@@ -281,6 +281,28 @@ exports.loginUser = (req, res, next) => {
         }); 
 };
 
+exports.getUserDashboard = (req, res, next) => {
+    const userId = req.user._id;
+    let errorMsg = '';
+    if (!userId) {
+        errorMsg = "UnAuthorised";
+        return res.status(403).render('registerandauth/login-user.ejs', {
+            pageTitle: 'Login User',
+            errorMessage: errorMsg,
+            validationErrors: [],
+            oldInput: {
+                username: '',
+                password: ''
+            },
+        });
+            
+    }
+    User.findOne(userId)
+        .then(userDetail => {
+            res.render('registerandauth/dashboard.ejs', { pageTitle: "Dashboard", user: userDetail })
+
+        })
+};
 
 exports.logoutUser  = (req, res, next) => {
     req.session.destroy(err => {

@@ -11,6 +11,8 @@ router.get('/login', userController.getLoginPage);
 
 router.post('/loginUser',  userController.loginUser);
 
+router.get('/dashboard',  AuthMiddleware, userController.getUserDashboard);
+
 router.post('/logout', AuthMiddleware , userController.logoutUser);
 
 router.get('/register', userController.getRegisterPage);

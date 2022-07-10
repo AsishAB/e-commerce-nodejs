@@ -81,7 +81,7 @@ function yearValidation(fieldId,fieldType, message) {
   
   }
 
-   /*##################Function to check Textfield having no value ################# */
+   /*##################Function to check File Upload having no value ################# */
    exports.fileBlankValidation = (data, fieldName, message='') => {
     /*=====================For Textfield blankValidation================== */
     //if(fieldType == "TextField" || fieldType == "TextArea"){
@@ -229,13 +229,13 @@ function yearValidation(fieldId,fieldType, message) {
       var email = data;
       if (email != ''){
           if (emailPattern.test(email) == true)
-              return false;
+              return true;
           else{
               message = "The Email id format is not correct. Accepted Format - example@example.com";
-              return true;
+              return false;
           }
       }else
-        return false;     
+        return true;     
   }
   
   /* ####################### Function to check if Password and Confirm Password match */

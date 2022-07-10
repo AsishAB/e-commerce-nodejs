@@ -68,6 +68,7 @@ exports.addProduct = (req, res, next) => {
         req.flash("error", "Unauthorised");
         return res.redirect('/user/login');
     }
+    
     const productId = req.body.productId;
     const title = req.body.title;
     const description = req.body.desc;
@@ -157,7 +158,8 @@ exports.addProduct = (req, res, next) => {
 }
 
 exports.deleteProduct = (req, res, next) => {
-    const prodId  = req.body.productId;
+    const prodId = (req.body.productId) ? encryptDecryptText.decrypt(req.body.productId, "private.pem") : '';
+    
     Product.findById(prodId)
         .then(productFromId => {
             if (productFromId.TP_Created_By.toString() != userId.toString()) {

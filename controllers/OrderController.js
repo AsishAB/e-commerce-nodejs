@@ -4,17 +4,31 @@ const Order  = require('../models/OrderModel');
 const OrderItems  = require('../models/OrderItemsModel');
 const Cart = require('../models/CartModel');
 const getUserId = require('../helpers/getUserId');
+const Crypt = require('../helpers/encrypt_decrypt/encryptDecryptText');
+const globalURL = require('../helpers/secret-files-gitallow/global-url');
+const nodemailer = require('nodemailer');
+const sendGridTransport = require('nodemailer-sendgrid-transport');
+const sendGridAPIKey = require('../helpers/secret-data/sendgrid_api');
+const sendEMail = require('../helpers/secret-data/personal-email');
+
+const transporter = nodemailer.createTransport(sendGridTransport({
+    auth: {
+        api_key : sendGridAPIKey
+    }
+}));
+        
+
 
 exports.getOrders = (req, res, next) => {
     
-    const userId = new mongodb.ObjectId(getUserId);
-    db.collection('doc_orders').find( {TO_User_Id: userId} ).toArray()
+    const userId = req.user._id;
+    Order.find( {TO_User_Id: userId} )
         .then(orders => {
             const orderIds = orders.map(ord => {
                 return ord.TO_Order_Id
             });
             
-            db.collection('doc_order_items').find( {TOI_Order_Id: { $in: orderIds } }).toArray()
+            OrderItems.find( {TOI_Order_Id: { $in: orderIds } })
                 .then(orderItems =>  {
                     const Order = {
                         orders : orders,
@@ -24,20 +38,20 @@ exports.getOrders = (req, res, next) => {
                     res.render('orders.ejs', { path:'/orders',pageTitle:"Orders" , OrderList : Order});
                 })
                 .catch(err => {
-                    console.log("Inside OrderController.js -> getOrders");
+                   
                     console.log(err);
                 });
         })
         .catch(err => {
-            console.log("Inside OrderController.js -> getOrders");
+           
             console.log(err);
         });
-    res.render('orders.ejs', { path:'/orders',pageTitle:"Orders" });
+    //res.render('orders.ejs', { path:'/orders',pageTitle:"Orders" });
 }
 
 exports.placeOrder = (req, res, next) => {
     
-    const userId = getUserId;
+    const userId = req.user._id;
     
     var totalPrice = 0;
     var OrderItemObject = [];
@@ -97,17 +111,9 @@ exports.placeOrder = (req, res, next) => {
                         TO_Coupon_Code: couponCode,
                         TO_Created_On: new Date()
                     };
-                    //console.log(OrderObject);
-                    // console.log('--------------------');
-                    // console.log(OrderItemObject);
-                    
+                   
                     const createOrder = new Order(OrderObject);
-                    //const createOrderItems = new OrderItems(OrderItemObject);
-                    // console.log(createOrderItems);
-                    // return;
-                    //console.log('--------------------');
-                    //console.log(createOrderItems);
-                    // return;   
+                   
                     createOrder.save()
                         .then(() => {
                             OrderItems.insertMany(OrderItemObject)
@@ -144,7 +150,7 @@ exports.placeOrder = (req, res, next) => {
 
 exports.getOrderConfirmation = (req, res, next) => {
     const orderId = req.query.orderId;
-    const userId = new mongodb.ObjectId(getUserId);
+    const userId = req.user._id;
     if (!orderId) {
         console.log("Inside OrderController.js -> getOrderConfirmation");
         console.log('No Order');
@@ -170,6 +176,8 @@ exports.getOrderConfirmation = (req, res, next) => {
                     //console.log(result);
                     //return;
                     result.forEach(element => {
+                        element.TOI_Product_Id.TP_Image_URL = globalURL + element.TOI_Product_Id.TP_Image_URL
+                        
                         totalPrice+=element.TOI_Product_Price * element.TOI_Quantity;
                         
                     });
@@ -180,8 +188,12 @@ exports.getOrderConfirmation = (req, res, next) => {
                                 shippingPrice: shippingPrice,
                                 grandTotal: totalPrice + shippingPrice
                             }  
-                            //console.log(orderObject.orderItemDetails.length);
-                            // return;
+                            transporter.sendMail({
+                                to: sendEMail.sendTo,
+                                from: "asish24in@gmail.com",
+                                subject: "Order Placed Succesfully",
+                                html: "<h1> Order Id: "+ orderId +"  </h1>"
+                            });
                             res.render('order-confirmation.ejs', { pageTitle: "Order Confirmation", order : orderObject });
                         })
                         .catch(err => {

@@ -9,14 +9,15 @@
           <div class="d-grid gap-2 d-sm-flex justify-content-sm-center mb-5">
             <form method="POST" action="/shop/addToCart">
               <button class="btn btn-primary btn-lg px-4 me-sm-3">Add to Cart</a>
-              <input type="hidden" name="productId" id="productId" value="<%= pdts[i].productId %>">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <input type="hidden" name="productId" id="productId" value="<%= product._id %>">
             </form>
             
           </div>
         </div>
         <div class="overflow-hidden" style="max-height: 30vh;">
           <div class="container px-5">
-            <img src="<%= product.imageURL %>" class="img-fluid border rounded-3 shadow-lg mb-4" alt="<%= product.title %>" width="200" height="200" loading="lazy">
+            <img src="<%= product.TP_Image_URL %>" class="img-fluid border rounded-3 shadow-lg mb-4" alt="<%= product.title %>" width="200" height="200" loading="lazy">
           </div>
         </div>
       </div>

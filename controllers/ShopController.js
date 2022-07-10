@@ -1,6 +1,6 @@
 const Product = require('../models/ProductModel');
-
-
+const Crypt = require('../helpers/encrypt_decrypt/encryptDecryptText');
+const globalURL = require('../helpers/secret-files-gitallow/global-url');
 
 //const products = new Products();
 exports.getShopIndexPage = (req, res, next) => {
@@ -8,13 +8,15 @@ exports.getShopIndexPage = (req, res, next) => {
 }
 
 
-
-
 exports.getAllProducts = (req, res, next) => {
+    
     Product.find()
     .then(products => { 
         products.forEach(element => {
+
+            element.TP_ProductId = Crypt.encrypt(element._id, "public.pem");
             element.TP_Product_Description = element.TP_Product_Description.substring(0,100) + "......";
+            element.TP_Image_URL = globalURL + element.TP_Image_URL;
         });
             res.render('product-list.ejs', { pageTitle:"Product List" ,pdts: products });
         })
@@ -26,7 +28,19 @@ exports.getAllProducts = (req, res, next) => {
 
 
 exports.getProductDetail = (req, res, next) => {
+    const productId = (req.params.id) ? Crypt.decrypt(req.params.id, "private.pem") : '';
     
+    Product.findById(productId)
+        .then(productDetail => {
+            productDetail.TP_Image_URL = globalURL + productDetail.TP_Image_URL;
+            res.render('product-detail.ejs', {pageTitle: "Product Detail", product: productDetail});
+        })
+        .catch(err => {
+            console.log(err);
+        });
+       
+    
+    //res.render('product-detail.ejs', {pageTitle: "Product Detail"});
 }
 
 

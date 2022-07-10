@@ -2,10 +2,11 @@ const mongodb = require('mongodb');
 const Cart = require('../models/CartModel');
 const Product = require('../models/ProductModel');
 const getUserId = require('../helpers/getUserId');
-
+const Crypt = require('../helpers/encrypt_decrypt/encryptDecryptText');
+const globalURL = require('../helpers/secret-files-gitallow/global-url');
 
 exports.getCart = (req, res, next) => {
-    const userId = new mongodb.ObjectId(getUserId);
+    const userId =req.user._id;
     var totalPrice = 0;
     const products = [];
     var shippingPrice = 200;
@@ -21,6 +22,7 @@ exports.getCart = (req, res, next) => {
             
             cartItems.forEach(element => {
                // console.log(element);
+               element.TCI_ProductId.TP_Image_URL = globalURL + element.TCI_ProductId.TP_Image_URL;
                 totalPrice+=element.TCI_Quantity * element.TCI_ProductId.TP_Product_Price;   
             });
             res.render('cart.ejs', { pageTitle: "Cart", cartItems: cartItems, totalPrice: totalPrice });
@@ -37,13 +39,12 @@ exports.getCart = (req, res, next) => {
     
 
 exports.addToCart = (req, res, next) => {
-    const prodId = new mongodb.ObjectId(req.body.productId);
-    const userId = new mongodb.ObjectId(getUserId);
+    const prodId = (req.body.productId) ? Crypt.decrypt(req.body.productId, "private.pem") : '';
+    
+    //const prodId = req.body.productId;
+    const userId = req.user._id;
     var quantity = 1;
-    // const db = getDB();
-
-    //Cart.find({ TCI_ProductId:prodId  })
-    // console.log(Cart);
+  
 
     Cart.findOne({ TCI_ProductId : prodId, TCI_Created_By:userId  })
         .then(cartItem => {
