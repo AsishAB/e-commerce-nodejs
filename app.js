@@ -119,21 +119,19 @@ app.use('/product_images', express.static(path.join(__dirname, 'public/file_uplo
 //app.use('/images', express.static('public/file_uploads/product_images'));
 
 app.use(htmlError.get404Page); //To display 404 page
+app.use('/500',htmlError.get500Page); //To display 404 page
+
+app.use((error, req, res, next) => {
+  // res.status(error.httpStatusCode).render(...);
+  // res.redirect('/500');
+  res.status(500).render('500', {
+    pageTitle: 'Error!',
+    path: '/500',
+    isAuthenticated: req.session.isLoggedIn
+  });
+});
 
 
-// app.use( (req, res, next) => {
-//     db.query("SELECT * FROM tbl_users WHERE TUM_Id = ? ", [1])
-//         .then( ([rows]) => {
-//             console.log("In app.js");
-//             console.log(rows[0].TUM_Id);
-//             req.users = rows[0].TUM_Id;
-//             next();
-//         })
-//         .catch(err => {
-//             console.log("In app.js");
-//             console.log(err); 
-//         });
-// });
 
         
         

@@ -143,28 +143,19 @@ exports.registerUser = (req, res, next) => {
                             })
                             .catch(err => {
                                 //console.log("Inside UserController.js");
-                                // console.log(err);
-                                const error = new Error(err);
-                                error.httpStatusCode = 500;
-                                return next(error);
+                                console.log(err);
                             });
                         })
                         .catch(err => {
                             //console.log("Inside UserController.js");
-                            //console.log(err);
-                            const error = new Error(err);
-                            error.httpStatusCode = 500;
-                            return next(error);
+                            console.log(err);
                         });
                    
         
             }
         })
         .catch(err => {
-            // console.log(err);
-            const error = new Error(err);
-            error.httpStatusCode = 500;
-            return next(error);
+            console.log(err);
         })
     
 };
@@ -281,18 +272,12 @@ exports.loginUser = (req, res, next) => {
 
                     })
                     .catch(err => {
-                        const error = new Error(err);
-                        error.httpStatusCode = 500;
-                        return next(error);
-                        //console.log(err);
+                        console.log(err);
                     }); 
             }
         })
         .catch(err => {
-            // console.log(err);
-            const error = new Error(err);
-            error.httpStatusCode = 500;
-            return next(error);
+            console.log(err);
         }); 
 };
 
@@ -317,21 +302,14 @@ exports.getUserDashboard = (req, res, next) => {
             res.render('registerandauth/dashboard.ejs', { pageTitle: "Dashboard", user: userDetail })
 
         })
-        .catch(err => {
-            const error = new Error(err);
-            error.httpStatusCode = 500;
-            return next(error);
-        });
 };
 
 exports.logoutUser  = (req, res, next) => {
     req.session.destroy(err => {
         if (err) {
-            //console.log("Inside UserController -> logoutUser");
-            const error = new Error(err);
-            error.httpStatusCode = 500;
-            return next(error);
-            //console.log(err);
+            console.log("Inside UserController -> logoutUser");
+            
+            console.log(err);
         }
         res.redirect('/user/login');  
     })
@@ -348,33 +326,19 @@ exports.getResetPassword = (req, res, next) => {
 
 
 exports.resetPassword = (req, res, next) => {
-    let errorMsg = '';
     crypto.randomBytes(32, (err, buffer) => {
         if (err) {
-            const error = new Error(err);
-            error.httpStatusCode = 500;
-            return next(error);
-            //console.log(err);
-            //req.flash('error', "Some Server Error occured. Please try again");
-            //return res.redirect('/user/reset-password');
+            console.log(err);
+            req.flash('error', "Some Server Error occured. Please try again");
+            return res.redirect('/user/reset-password');
         }
         const token = buffer.toString('hex');
         const userId = req.body.username;
         User.findOne({$or: [{TUM_Email:userId},{TUM_MobileNo:userId}]})
             .then(result => {
                 if (!result) {
-                    errorMsg = "No such user found in our database";
-                    return res.status(400).render('registerandauth/reset-password.ejs', {
-                        pageTitle: 'Reset Password',
-                        errorMessage: errorMsg,
-                        validationErrors: [],
-                        // oldInput: {
-                        //     // username: '',
-                        //     // password: ''
-                        // },
-                    });
-                    // req.flash('error', "No such user found in our database");
-                    // return res.redirect('/user/reset-password');
+                    req.flash('error', "No such user found in our database");
+                    return res.redirect('/user/reset-password');
                 }
 
                 const resetPassword = new ResetPassword({
@@ -398,14 +362,11 @@ exports.resetPassword = (req, res, next) => {
                         
                         //Send email 
                     })
-                    // .then(() => {
+                    .then(() => {
                         
-                    // })
+                    })
                     .catch(err => {
-                        //console.log(err);
-                        const error = new Error(err);
-                        error.httpStatusCode = 500;
-                        return next(error);
+                        console.log(err);
                     })
 
                 
@@ -418,7 +379,6 @@ exports.resetPassword = (req, res, next) => {
 
 exports.getUpdatePassword = (req, res, next) => {
     let message = req.flash('error').length > 0 ? req.flash('error')[0] : '' ;
-    let errorMsg = '';
     const isLoggedIn = req.session.isLoggedIn ? req.session.isLoggedIn : false;
     const userId = req.query.userId;
     const token = req.query.token;
@@ -428,19 +388,8 @@ exports.getUpdatePassword = (req, res, next) => {
     }
     // console.log(tokenObject);
     if ((userId == '' || userId == undefined) && (token == '' || token == undefined )) {
-        errorMsg = 'Incorrect User Id or Token. Please follow the process again';
-        return res.status(400).render('registerandauth/reset-password.ejs', {
-            pageTitle: 'Reset Password',
-            errorMessage: errorMsg,
-            validationErrors: [],
-            tokenObject:tokenObject 
-            // oldInput: {
-            //     // username: '',
-            //     // password: ''
-            // },
-        });
-        // req.flash('error', "Incorrect User Id or Token. Please follow the process again");
-        // return res.redirect('/user/reset-password');
+        req.flash('error', "Incorrect User Id or Token. Please follow the process again");
+        return res.redirect('/user/reset-password');
     }
     res.render('registerandauth/update-password.ejs', { pageTitle: "Update Password",isLoggedIn: isLoggedIn  , errorMessage: message, tokenObject:tokenObject });
 
@@ -486,17 +435,11 @@ exports.updatePassword = (req, res, next) => {
                                             return res.redirect('/user/login');
                                         })
                                         .catch(err => {
-                                            // console.log(err);
-                                            const error = new Error(err);
-                                            error.httpStatusCode = 500;
-                                            return next(error);
+                                            console.log(err);
                                         }); 
                                 })
                                 .catch(err => {
-                                    const error = new Error(err);
-                                    error.httpStatusCode = 500;
-                                    return next(error);
-                                    //console.log(err);
+                                    console.log(err);
                                 }); 
                             //const user = new User({TUM_FirstName:firstName, TUM_LastName:lastName, TUM_Email:emailId, TUM_MobileNo:phoneNo, TUM_Password:hashedPassword,TUM_Role:'customer'});
                             // user.save()
@@ -507,10 +450,7 @@ exports.updatePassword = (req, res, next) => {
                     }
                 })
                 .catch(err => {
-                    const error = new Error(err);
-                    error.httpStatusCode = 500;
-                    return next(error);
-                   // console.log(err);
+                    console.log(err);
                 })
         });
 
