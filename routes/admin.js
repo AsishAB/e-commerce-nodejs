@@ -21,12 +21,8 @@ router.get('/add-product', AuthMiddleware ,  productController.getAddProduct);
 router.post('/add-product', AuthMiddleware ,MulterMiddleware("products"), productController.addProduct);
 router.get('/product-list', AuthMiddleware , productController.getProductListAdmin);
 router.get('/edit-product/:id',  AuthMiddleware ,MulterMiddleware("products"),productController.getAddProduct); //Add and Edit in the same function
-router.post('/delete-product',  AuthMiddleware ,productController.deleteProduct);
+// router.post('/delete-product',  AuthMiddleware ,productController.deleteProduct); // While NOT using Ajax
 
-// router.get('/edit-product/:id', productController.getEditProductAdmin);
+router.delete('/delete-product/:productId',  AuthMiddleware ,productController.deleteProduct);  // While using Ajax
 
 exports.routes = router;
-
-// module.exports = router;
-// exports.products = pdt;
-

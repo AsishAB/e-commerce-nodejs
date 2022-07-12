@@ -122,9 +122,12 @@ app.use(htmlError.get404Page); //To display 404 page
 app.use('/500',htmlError.get500Page); //To display 404 page
 
 app.use((error, req, res, next) => {
+  if (errors) {
+    console.log(error);
+  }
   // res.status(error.httpStatusCode).render(...);
   // res.redirect('/500');
-  res.status(500).render('500', {
+  res.status(500).render('500-error.ejs', {
     pageTitle: 'Error!',
     path: '/500',
     isAuthenticated: req.session.isLoggedIn

@@ -171,6 +171,7 @@ exports.registerUser = (req, res, next) => {
 
 
 exports.getLoginPage = (req, res, next) => {
+    
     const isLoggedIn  = req.session.isLoggedIn ? req.session.isLoggedIn : false;
     
     let message = req.flash('error').length > 0 ? req.flash('error')[0] : '' ;

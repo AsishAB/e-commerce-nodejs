@@ -6,13 +6,15 @@ const globalURL = require('../helpers/secret-files-gitallow/global-url');
 const encryptDecryptText = require('../helpers/encrypt_decrypt/encryptDecryptText');
 const Validation = require('../helpers/validation/validation');
 
+
+
 exports.getProductListAdmin = (req, res, next) => {
     //console.log(req.user);
     
     Product.find({TP_Created_By: req.user})
     .then(products => { 
         products.forEach(element => {
-           
+            
             //element._id = encryptDecryptText.encryptText(element._id); //Not working
             element.TP_ProductId = encryptDecryptText.encrypt(element._id, "public.pem");
                 
@@ -20,6 +22,8 @@ exports.getProductListAdmin = (req, res, next) => {
             // return;
             element.TP_Product_Description = element.TP_Product_Description.substring(0,100) + "......";
             element.TP_Image_URL = globalURL + element.TP_Image_URL;
+            element.action = '<a href="/admin/edit-product/'+ element.TP_ProductId + '" class="btn border border-primary text-primary">Edit</a> &nbsp;<button class="btn border border-danger text-danger" onclick="deleteProduct(\''+element.TP_ProductId+'\', this)"> Delete </button>';
+           
         });
         //console.log(products);
         res.render('admin/product.ejs', { pageTitle: "Admin Product List", pdts: products });
@@ -158,6 +162,44 @@ exports.addProduct = (req, res, next) => {
 }
 
 exports.deleteProduct = (req, res, next) => {
+    const userId = req.user._id; 
+    const prodId = (req.params.productId) ? encryptDecryptText.decrypt(req.params.productId, "private.pem") : '';
+    const data = {};
+    Product.findById(prodId)
+        .then(productFromId => {
+            if (productFromId.TP_Created_By.toString() != userId.toString()) {
+                data.response = 'error';
+                data.message = "Unauthorised";
+                console.log("Inside ProductController ->addProduct (edit product) ");
+                console.log("Unauthorised");
+                //req.flash('error', "Unauthorised");
+                //return res.redirect('/');
+                return res.json(data);
+            }
+        });
+    
+    Product.findByIdAndRemove(prodId)
+    .then(() => {
+        // console.log("Inside Product Controller.js");
+        // console.log("Product Deleted");
+        data.response = 'success';
+        data.message = "Product Deleted";
+        return res.json(data);
+    })
+    .catch(err => {
+        data.response = 'success';
+        data.err = err;
+        data.error  
+        //console.log("Inside Product Controller.js");
+        return res.json(data);
+    });
+    
+};
+
+
+/* For router.post in admin.js route       
+ exports.deleteProduct = (req, res, next) => {
+   
     const prodId = (req.body.productId) ? encryptDecryptText.decrypt(req.body.productId, "private.pem") : '';
     
     Product.findById(prodId)
@@ -181,8 +223,5 @@ exports.deleteProduct = (req, res, next) => {
         console.log(err);
     });
     
-};
-
-
-           
-    
+};   
+ */  
