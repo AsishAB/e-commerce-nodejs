@@ -7,12 +7,13 @@ function deleteProduct(id, btn) {
         headers: {
             'csrf-token': csrf
         }
-    }).then(result => {
+    })
+    .then(result => {
         //console.log(result);
         return result.json()
     })
     .then(data => {
-        // console.log(data);
+        console.log(data);
         if (data.response == 'success') {
             console.log("Inside public folder -> js -> ajax-scripts.js");
             console.log(data.message);

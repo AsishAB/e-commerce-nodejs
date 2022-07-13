@@ -8,34 +8,30 @@ const Validation = require('../helpers/validation/validation');
 
 
 
-exports.getProductListAdmin = (req, res, next) => {
+exports.getProductListAdmin = async (req, res, next) => {
     //console.log(req.user);
-    
-    Product.find({TP_Created_By: req.user})
-    .then(products => { 
+    try {
+        const products =  await Product.find({TP_Created_By: req.user})
         products.forEach(element => {
-            
-            //element._id = encryptDecryptText.encryptText(element._id); //Not working
+           //element._id = encryptDecryptText.encryptText(element._id); //Not working
             element.TP_ProductId = encryptDecryptText.encrypt(element._id, "public.pem");
-                
-            
-            // return;
+             
             element.TP_Product_Description = element.TP_Product_Description.substring(0,100) + "......";
             element.TP_Image_URL = globalURL + element.TP_Image_URL;
             element.action = '<a href="/admin/edit-product/'+ element.TP_ProductId + '" class="btn border border-primary text-primary">Edit</a> &nbsp;<button class="btn border border-danger text-danger" onclick="deleteProduct(\''+element.TP_ProductId+'\', this)"> Delete </button>';
            
         });
-        //console.log(products);
+        
         res.render('admin/product.ejs', { pageTitle: "Admin Product List", pdts: products });
-    })
-    .catch(err => {
-        console.log("Inside ProductController \n");
-        console.log(err);
-    });
+    } catch(err) {
+            const error = new Error(err);
+            error.httpStatusCode = 500;
+            return next(error);
+    }
 };
 
 
-exports.getAddProduct = (req, res, next) => {
+exports.getAddProduct = async (req, res, next) => {
     
     const prodId = (req.params.id) ? encryptDecryptText.decrypt(req.params.id, "private.pem") : '';
     // console.log(prodId);
@@ -44,33 +40,42 @@ exports.getAddProduct = (req, res, next) => {
 
         res.render('add-product.ejs',{ pageTitle: "Add Product",product: [], oldInput: {title: '',desc: '', price:'' } });
     } else {
+        try {
+            const product = await Product.findById(prodId)
+            product.TP_Image_URL = globalURL + product.TP_Image_URL;
+            res.render('add-product.ejs', { pageTitle: "Edit Product", product: product, oldInput: {title: '',desc: '', price:'' } });
         
-        Product.findById(prodId)
-            
-            .then(product => {
-                product.TP_Image_URL = globalURL + product.TP_Image_URL;
-                // console.log("Inside ProductController \n");
-                // console.log(product);
-                
-                res.render('add-product.ejs', { pageTitle: "Edit Product", product: product, oldInput: {title: '',desc: '', price:'' } });
-            })  
-             .catch(err => {
-                console.log("Inside ProductController \n");
-                console.log(err);
-            }); 
+        }
+        catch(err) {
+            const error = new Error(err);
+            error.httpStatusCode = 500;
+            return next(error);
+            // console.log("Inside ProductController \n");
+            // console.log(err);
+        } 
 
     }
         
 }
 
 
-exports.addProduct = (req, res, next) => {
+exports.addProduct = async (req, res, next) => {
     //pdt.push({title:req.body.title});
-    const errorMsg = [];
+    let errorMsg = '';
     const userId = req.user._id; //Available in app.js
+    const validationError = [];
     if (!userId) {
-        req.flash("error", "Unauthorised");
-        return res.redirect('/user/login');
+        errorMsg = "Unauthorised";
+        return res.status(403).render('registerandauth/login-user.ejs', {
+            pageTitle: 'Login User',
+            errorMessage: errorMsg,
+            validationErrors: [],
+            oldInput: {
+                username: '',
+                password: ''
+            },
+        });
+        
     }
     
     const productId = req.body.productId;
@@ -84,25 +89,32 @@ exports.addProduct = (req, res, next) => {
     let fileName = (imgURL) ? "product_images/" + imgURL.filename : '';
 
     if  (Validation.blankValidation(title)) {
-        errorMsg.push("Title cannot be blank");
+        validationError.push("Title cannot be blank");
     }
         
     if  (Validation.blankValidation(description)) {
-        errorMsg.push("Description cannot be blank");
+        validationError.push("Description cannot be blank");
     }
         
     if  (Validation.blankValidation(price)) {
-        errorMsg.push("Price cannot be blank");
+        validationError.push("Price cannot be blank");
     }
     if  (productId =='' && Validation.fileBlankValidation(imgURL)) {
-        errorMsg.push("Please select a file to upload");
+        validationError.push("Please select a file to upload");
     }
         
     
-    if (errorMsg.length > 0) {
-        console.log(errorMsg);
-        req.flash('error', errorMsg[0]);
-        return res.redirect('/admin/add-product');
+    if (validationError.length > 0) {
+        return res.status(403).render('add-product.ejs', {
+            pageTitle: "Edit Product",
+            errorMessage: errorMsg,
+            validationErrors: validationError,
+            oldInput: {title: '',desc: '', price:'' }
+        });
+        
+        // console.log(errorMsg);
+        // req.flash('error', errorMsg[0]);
+        // return res.redirect('/admin/add-product');
      
     }
     //console.log("Inside ProductController " + title + description + price + imgURL);
@@ -114,20 +126,29 @@ exports.addProduct = (req, res, next) => {
             res.redirect('/admin/product-list');
         })
         .catch(err => {
-            
-            console.log(err);
+            const error = new Error(err);
+            error.httpStatusCode = 500;
+            return next(error);
+            //console.log(err);
         });
+            
     } else {
         
         // product = new Product({TP_ProductId: productId ,TP_Product_Title:title,TP_Product_Description:description,TP_Image_URL:imgURL,TP_Product_Price:price,TP_Created_By:null});
-        Product.findById(productId)
-            .then(productFromId => {
-                if (productFromId.TP_Created_By.toString() != userId.toString()) {
-                    console.log("Inside ProductController ->addProduct (edit product) ");
-                    console.log("Unauthorised");
-                    req.flash('error', "Unauthorised");
-                    return res.redirect('/');
-                }
+        const productFromId = await Product.findById(productId)
+        if (productFromId.TP_Created_By.toString() != userId.toString()) {
+            errorMsg = "Unauthorised";
+            return res.status(403).render('add-product.ejs', {
+                pageTitle: "Edit Product",
+                errorMessage: errorMsg,
+                validationErrors: [],
+                oldInput: {title: '',desc: '', price:'' }
+            });
+                    // console.log("Inside ProductController ->addProduct (edit product) ");
+                    // console.log("Unauthorised");
+                    // req.flash('error', "Unauthorised");
+                    // return res.redirect('/');
+        }
                 if ( !imgURL ) {
                     productFromId.TP_Product_Title=title;
                     productFromId.TP_Product_Description=description;
@@ -152,7 +173,7 @@ exports.addProduct = (req, res, next) => {
                     
                     console.log(err);
                 });
-            });
+            
     }
     
     
@@ -161,38 +182,46 @@ exports.addProduct = (req, res, next) => {
    // res.redirect('/admin/product-list');
 }
 
-exports.deleteProduct = (req, res, next) => {
+exports.deleteProduct = async (req, res, next) => {
     const userId = req.user._id; 
     const prodId = (req.params.productId) ? encryptDecryptText.decrypt(req.params.productId, "private.pem") : '';
+    // console.log(prodId);
+    // return;
     const data = {};
-    Product.findById(prodId)
-        .then(productFromId => {
-            if (productFromId.TP_Created_By.toString() != userId.toString()) {
+    try {
+        const productFromId = await Product.findById(prodId);
+        // console.log(productFromId);
+        // return;
+        if (productFromId.TP_Created_By.toString() != userId.toString()) {
                 data.response = 'error';
                 data.message = "Unauthorised";
-                console.log("Inside ProductController ->addProduct (edit product) ");
-                console.log("Unauthorised");
-                //req.flash('error', "Unauthorised");
-                //return res.redirect('/');
+               
                 return res.json(data);
-            }
-        });
+        } 
+    } catch (err) {
+            data.response = 'error';
+            data.message = err;
+            // data.error  
+            //console.log("Inside Product Controller.js");
+            return res.json(data);
+    }
     
-    Product.findByIdAndRemove(prodId)
-    .then(() => {
-        // console.log("Inside Product Controller.js");
-        // console.log("Product Deleted");
+    try {
+        const result = await Product.findByIdAndRemove(prodId);
+        //console.log(result);
         data.response = 'success';
         data.message = "Product Deleted";
         return res.json(data);
-    })
-    .catch(err => {
-        data.response = 'success';
-        data.err = err;
-        data.error  
+
+    } catch (err) {
+        data.response = 'error';
+        data.message = err;
+        // data.error  
         //console.log("Inside Product Controller.js");
         return res.json(data);
-    });
+    }
+
+   
     
 };
 
