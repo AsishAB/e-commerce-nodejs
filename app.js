@@ -1,13 +1,15 @@
 
 const express = require("express");
-
-const bodyParser = require('body-parser');
 const app = express();
+
+const fs = require('fs');
+const bodyParser = require('body-parser');
 const path = require("path");
 const cookieParser = require('cookie-parser');
 const flash = require('connect-flash');
 const helmet = require('helmet');
 const compression = require('compression');
+const morgan = require('morgan');
 
 const indexRoutes = require('./routes/index');
 const adminData = require("./routes/admin");
@@ -43,7 +45,15 @@ const csrfProtection = csrf();
 
 app.use(bodyParser.urlencoded({extended:false}));
 app.use(helmet());
+
+/* Heroku Does NOT allow compression */
 app.use(compression());
+
+const accessLogStream = fs.writeFileStream(
+  path.join(_dirname, 'manual_logs/access.log'),
+  { flags: 'a' }
+)
+app.use(morgan('combined', { stream: accessLogStream }));
 
 // const storage = multer.diskStorage({
 //     destination: function (req, file, cb) {
