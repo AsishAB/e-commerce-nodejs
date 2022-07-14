@@ -6,7 +6,7 @@ const app = express();
 const path = require("path");
 const cookieParser = require('cookie-parser');
 const flash = require('connect-flash');
-// const multer = require('multer');
+const helmet = require('helmet');
 
 const indexRoutes = require('./routes/index');
 const adminData = require("./routes/admin");
@@ -41,7 +41,7 @@ const csrfProtection = csrf();
 // app.use(flash());
 
 app.use(bodyParser.urlencoded({extended:false}));
-// app.use()
+app.use(helmet());
 
 // const storage = multer.diskStorage({
 //     destination: function (req, file, cb) {
