@@ -1,4 +1,4 @@
-# REST API using react-nodejs
+# REST API using react-nodejs & <a href="https://graphql.org/" target="_blank">GraphQL</a>
 
 Use <code> npm install </code> or <code> npm i </code> inside both the folders
 
