@@ -3,8 +3,12 @@ const Validation = require('../helpers/validation/validation');
 const globalURL = require('../helpers/secret-files-gitallow/global-url');
 const HelperClass = require('../helpers/helper_functions/helper');
 const UserModel = require('../models/UserModel');
+const io = require('../socket');
+
 
 exports.getPosts = (req, res, next) => {
+    // console.log(io.getIO());
+    // return;
     const currentPage = req.query.page || 1;
     const perPage = 2;
     let totalItems;
@@ -107,6 +111,7 @@ exports.addEditPost = async (req, res, next) => {
             const user = await UserModel.findById(userId);
                 user.posts.push(result);
                 const resultUser = await user.save();
+                io.getIO().emit('posts',{action: 'create', post: result})
                 res.status(201).json({
                 response: 'success',
                 message: "Post Created Successfully",

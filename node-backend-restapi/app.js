@@ -37,7 +37,17 @@ app.use((error, req, res, next) => {
 mongoose.connect(mongoURL)
     .then(result => {
         console.log(`REST API app listening on port ${port} - http://localhost:${port}`);
-        app.listen(port);
+        const server = app.listen(port);
+        const io = require('./socket').init(server, {
+            cors: {
+                origin: "http://localhost:3000",
+                methods: ["GET", "POST", "PUT", "PATCH", "DELETE"]
+            }
+        });
+        io.on('connection', socket => {
+            console.log("In app.js");
+            console.log("Client Connected");
+        })
     })
     .catch(err => {
          
