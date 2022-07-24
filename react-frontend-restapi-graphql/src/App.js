@@ -110,7 +110,15 @@ class App extends Component {
   signupHandler = (event, authData) => {
     event.preventDefault();
     this.setState({ authLoading: true });
-    fetch('http://localhost:8080/auth/signup', {
+    const graphqlQuery = `
+        mutation {
+          createUser(userInput: {email:"${authData.signupForm.email.value}", name:"${authData.signupForm.name.value}", password: "${authData.signupForm.password.value}"}) {
+            _id
+            email
+          }
+        } 
+    `;
+    fetch('http://localhost:8080/graphql', {
       method: "POST",
       headers: {
         'Content-Type': "application/json",
