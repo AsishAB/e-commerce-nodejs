@@ -17,8 +17,8 @@ class SinglePost extends Component {
     
     const graphqlQuery = {
       query: `
-          {
-            getPostById(postId: "${postId}") {
+          query GetPostById($postId: ID!){
+            getPostById(postId: $postId) {
               _id
               title
               content
@@ -30,7 +30,10 @@ class SinglePost extends Component {
               }
       
           }
-      `
+      `,
+      variables: {
+        postId: postId
+      }
     }
     fetch('http://localhost:8090/graphql', {
       method: "POST",

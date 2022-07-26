@@ -39,18 +39,18 @@ app.use(AuthMiddleware);
 
 app.post('/upload-image', MulterMiddleware('posts'), (req, res, next) => {
     let error;
-
+    
     if (!req.isAuth) {
         error = new Error("Inside app.js -> upload-image === Unauthenticated");
         error.statusCode = 401;
         throw error;
     }
     if (!req.file) {
-        return res.status(200).json({message: "No File selected for upload"});
+        return res.status(200).json({message: "No File selected for upload",fileName: ''});
     }
-    if (req.body.oldPath) {
-        Helper.deleteFile(req.body.oldPath);
-    }
+    // if (req.body.oldPath) {
+    //     Helper.deleteFile(req.body.oldPath);
+    // }
     const imageURL = req.file;
     let fileName = (imageURL) ? "post_images/" + imageURL.filename : '';
     return res.status(201).json( {response:'success',message: "File Stored", fileName: fileName} );

@@ -5,6 +5,7 @@ const validator = require('validator');
 const globalURL = require('../helpers/secret-files-gitallow/global-url');
 const jwt = require('jsonwebtoken');
 const secretJsonWebTokenKey = require('../helpers/secret-files-gitallow/jsonwebtoken-secret');
+const Helper = require('../helpers/helper_functions/helper');
 //req.isAuth is inside middlewares-> AuthMiddleware.js
 
 
@@ -112,9 +113,9 @@ module.exports = {
         if (validator.isEmpty(content)) {
             validationErrors.push("Content cannot be blank");
         }
-        // if (validator.isEmpty(image)) {
-        //     validationErrors.push("Image cannot be blank");
-        // }
+        if (validator.isEmpty(image)) {
+            validationErrors.push("Image cannot be blank");
+        }
 
         if(validationErrors.length > 0 ) {
             error = new Error("Error in Input Fields");
@@ -208,5 +209,143 @@ module.exports = {
         post.imageURL = globalURL + post.imageURL;
 
         return { ...post._doc, _id: post._id.toString(), createdAt: post.createdAt.toISOString(), updatedAt: post.updatedAt.toISOString() };
+    },
+
+    editPost: async function({postId, postInput}, req) {
+        // console.log(postInput);
+        // return;
+        
+        if (!req.isAuth) {
+            const error = new Error("Inside graphql -> resolvers.js -> editPost === Unauthenticated");
+            error.statusCode = 401;
+            throw error;
+        }
+        const userId = req.userId;
+        if (!userId) {
+            const error = new Error("Inside graphql -> resolvers.js -> editPost === No User Found");
+            error.statusCode = 401;
+            throw error;
+        }
+        const post = await Post.findById(postId).populate('creator');
+        
+        if (!post) {
+            const error = new Error("Inside graphql -> resolvers.js -> editPost === No Post Found");
+            error.statusCode = 404;
+            throw error;
+        }
+
+        if (post.creator._id.toString() !== userId.toString()) {
+            const error = new Error("Inside graphql -> resolvers.js -> editPost === Not Authorised! Users do not match");
+            error.statusCode = 401;
+            throw error;
+        }
+
+        if (validator.isEmpty(postInput.title)) {
+            validationErrors.push("Title cannot be blank");
+        }
+        
+        if (validator.isEmpty(postInput.content)) {
+            validationErrors.push("Content cannot be blank");
+        }
+        // if (validator.isEmpty(image)) {
+        //     validationErrors.push("Image cannot be blank");
+        // }
+        let image;
+        if (postInput.image == '' || postInput.image == 'undefined') {
+            image = post.imageURL; //No change
+
+        } else {
+            image = postInput.image;
+        }
+            post.title = postInput.title;
+            post.content = postInput.content;
+            post.imageURL = image;
+            
+        //try {
+            const result = await post.save();
+            return { ...result._doc, _id: result._id.toString(),createdAt: result.createdAt.toISOString(), updatedAt: result.updatedAt.toISOString()  }
+        // } catch (err) {
+        //     throw err;
+        // }
+
+    },
+
+    deletePost: async function({postId}, req) {
+        if (!req.isAuth) {
+            const error = new Error("Inside graphql -> resolvers.js -> editPost === Unauthenticated");
+            error.statusCode = 401;
+            throw error;
+        }
+        const userId = req.userId;
+        if (!userId) {
+            const error = new Error("Inside graphql -> resolvers.js -> editPost === No User Found");
+            error.statusCode = 401;
+            throw error;
+        }
+        const post = await Post.findById(postId);
+        
+        if (!post) {
+            const error = new Error("Inside graphql -> resolvers.js -> editPost === No Post Found");
+            error.statusCode = 404;
+            throw error;
+        }
+
+        if (post.creator.toString() !== userId.toString()) {
+            const error = new Error("Inside graphql -> resolvers.js -> editPost === Not Authorised! Users do not match");
+            error.statusCode = 401;
+            throw error;
+        }
+        // Helper.deleteFile(post.imageURL);
+        await Post.findByIdAndDelete(postId);
+        const user = await User.findById(userId);
+        user.posts.pull(postId);
+        await user.save();
+        
+        return true;
+    },
+    userStatus: async function(args , req) {
+        if (!req.isAuth) {
+            const error = new Error("Inside graphql -> resolvers.js -> userStatus === Unauthenticated");
+            error.statusCode = 401;
+            throw error;
+        }
+        const userId = req.userId;
+        if (!userId) {
+            const error = new Error("Inside graphql -> resolvers.js -> userStatus === No User Found");
+            error.statusCode = 401;
+            throw error;
+        }
+
+        const user =await User.findById(userId);
+        if (!user) {
+            const error = new Error("Inside graphql -> resolvers.js -> userStatus === No User Found From Id");
+            error.statusCode = 401;
+            throw error;
+        }
+
+        return { ...user._doc, _id: user._id.toString() }
+    },
+    updateUserStatus: async function({status} , req) {
+        if (!req.isAuth) {
+            const error = new Error("Inside graphql -> resolvers.js -> userStatus === Unauthenticated");
+            error.statusCode = 401;
+            throw error;
+        }
+        const userId = req.userId;
+        if (!userId) {
+            const error = new Error("Inside graphql -> resolvers.js -> userStatus === No User Found");
+            error.statusCode = 401;
+            throw error;
+        }
+
+        const user =await User.findById(userId);
+        if (!user) {
+            const error = new Error("Inside graphql -> resolvers.js -> userStatus === No User Found From Id");
+            error.statusCode = 401;
+            throw error;
+        }
+        user.status = status;
+        await user.save();
+        return { ...user._doc, _id: user._id.toString() }
     },
 };

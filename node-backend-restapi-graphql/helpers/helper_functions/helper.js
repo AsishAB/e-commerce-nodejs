@@ -1,4 +1,58 @@
 
+// const { Result } = require("express-validator");
+const path = require('path');
+    const fs = require('fs');
+
+    exports.deleteFile = (filePath) => {
+        let absoluteFilePath = path.join(__dirname, '..', "/public/" + filePath);
+        fs.unlink(absoluteFilePath, err => {
+            console.log(err);
+            
+        });
+    }       
+   
+	
+	//Check sqlinjection
+	exports.checkSqlInjection = (string='',mysql_real_escape=true) => {		
+		if(mysql_real_escape){
+			
+			string= string.replace(['\\', "\0", "\n", "\r", "'", '"', "\x1a"], ['\\\\', '\\0', '\\n', '\\r', "\\'", '\\"', '\\Z']); 
+		}
+		return string;
+	}	
+
+    exports.getStatusNameLogo = () => {
+       
+        // $result = DB::table('tbl_status_mstr')
+        //         ->select('TSM_Status','TSM_Status_Name', 'TSM_Status_Name_Odia','TSM_Status_Logo')
+        //         ->where('TSM_Status_DeletedFlag', '=', false)
+        //         ->get();
+        // foreach($result as $val){
+        //     $resArr[$val->TSM_Status_Name]=$val->TSM_Status_Logo;
+        // }        
+        // return !empty($resArr) ? $resArr :array();
+       
+    }
+  
+ 
+    exports.getAssignedUserInfo = (userId) => {
+        
+        // result = DB::table('tbl_user_mstr as tum')
+        //         ->select('tum.TUM_User as userid', 'tum.TUM_User_Email as useremail', 'tum.TUM_User_Mobile as usermobile',DB::raw("(CONCAT(tum.TUM_User_Name,' ',tum.TUM_User_Lname)) as username"))
+        //         ->where('tum.TUM_User', '=', $userId)
+        //         ->where('tum.TUM_User_DeletedFlag', '=', 0)
+        //         ->where('tum.TUM_User_Status', '=', 1)
+        //         ->get();
+
+        return result;
+        
+    }
+   
+  
+
+
+
+    
 /*
 
 // ============================================================================================================================================
@@ -220,54 +274,3 @@
 // ============================================================================================================================================
  
 */
-
-// const { Result } = require("express-validator");
-const path = require('path');
-    const fs = require('fs');
-
-    exports.deleteFile = (filePath) => {
-        let absoluteFilePath = path.join(__dirname, '..', "public/" + filePath);
-        fs.unlink(absoluteFilePath, err => {
-            console.log(err);
-            
-        });
-    }       
-   
-	
-	//Check sqlinjection
-	exports.checkSqlInjection = (string='',mysql_real_escape=true) => {		
-		if(mysql_real_escape){
-			
-			string= string.replace(['\\', "\0", "\n", "\r", "'", '"', "\x1a"], ['\\\\', '\\0', '\\n', '\\r', "\\'", '\\"', '\\Z']); 
-		}
-		return string;
-	}	
-
-    exports.getStatusNameLogo = () => {
-       
-        // $result = DB::table('tbl_status_mstr')
-        //         ->select('TSM_Status','TSM_Status_Name', 'TSM_Status_Name_Odia','TSM_Status_Logo')
-        //         ->where('TSM_Status_DeletedFlag', '=', false)
-        //         ->get();
-        // foreach($result as $val){
-        //     $resArr[$val->TSM_Status_Name]=$val->TSM_Status_Logo;
-        // }        
-        // return !empty($resArr) ? $resArr :array();
-       
-    }
-  
- 
-    exports.getAssignedUserInfo = (userId) => {
-        
-        // result = DB::table('tbl_user_mstr as tum')
-        //         ->select('tum.TUM_User as userid', 'tum.TUM_User_Email as useremail', 'tum.TUM_User_Mobile as usermobile',DB::raw("(CONCAT(tum.TUM_User_Name,' ',tum.TUM_User_Lname)) as username"))
-        //         ->where('tum.TUM_User', '=', $userId)
-        //         ->where('tum.TUM_User_DeletedFlag', '=', 0)
-        //         ->where('tum.TUM_User_Status', '=', 1)
-        //         ->get();
-
-        return result;
-        
-    }
-   
-  
