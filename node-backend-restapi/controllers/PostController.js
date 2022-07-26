@@ -126,10 +126,7 @@ exports.addEditPost = async (req, res, next) => {
         }
     } else {
         // Edit a post
-        // console.log(postId);
-        // return;
-        // console.log(req.body);
-        // return;
+        
         try {
             const post = await PostModel.findById(postId);
             
