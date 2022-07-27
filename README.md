@@ -12,8 +12,8 @@ Node JS with TypeScript
 
 <li> 
 	<ul>
-		<li> <code> npm run dev </code> = <code> nodemon dist/app.js </code>  : To be used in Development Server </li>
-		<li> <code> npm start </code> = <code> node dist/app.js </code>  : To be used in Development Server </li>
+		<li> <code> npm run dev </code> = <code> nodemon dist/app.js </code>  : &nbsp; To be used in Development Server </li>
+		<li> <code> npm start </code> = <code> node dist/app.js </code>  : &nbsp; To be used in Production Server </li>
 	</ul>
 </li>
 
