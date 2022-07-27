@@ -6,7 +6,7 @@ Node JS with TypeScript
 
 <li> Then open the Command Prompt and run <code> npm install </code> or <code> npm i </code> to generate the <code>node_modules </code> folder </li>
 
-<li> Then open the Command Prompt and type <code>tsc</code> <small>(tsc => typescript compiler)</small> and press <b>enter</b> </li>
+<li> Then type <code>tsc</code> <small>(tsc => typescript compiler)</small> and press <b>enter</b> </li>
 
 <li> A folder named <code>dist</code> should be created with the <code>.js</code> files for all <code>.ts</code> files </li>
 
